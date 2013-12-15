@@ -1,34 +1,38 @@
+import json
+
 class D3_Schedule:
 
-    def comprehend_schedule_for_d3(self, schedule):
+    def __init__(self, schedule):
+        self.schedule = schedule
+
+    def get_d3_schedule(self, by_year=None):
             d3_data = []
-            bal_data = {}
 
-            bal_data['key'] = "Balance"
-            bal_data['values'] = []
+            if by_year:
+                d3_data.insert(0, self.add_year_key("balance"))
+                d3_data.insert(1, self.add_year_key("principal"))
+                d3_data.insert(2, self.add_year_key("interest"))
+                d3_data.insert(3, self.add_year_key("amount"))
+            else:
+                d3_data.insert(0, self.add_month_key("balance"))
+                d3_data.insert(1, self.add_month_key("principal"))
+                d3_data.insert(2, self.add_month_key("interest"))
+                d3_data.insert(3, self.add_month_key("amount"))
 
-            for month in schedule:
-                bal_data['values'].append([month['month'], month['balance']])
+            return json.dumps(d3_data)
 
-            d3_data.insert(0, bal_data)
-            prin_data = {}
+    def add_month_key(self, key):
+        return self.add_key(key, 'month')
 
-            prin_data['key'] = "Principal"
-            prin_data['values'] = []
+    def add_year_key(self, key):
+        return self.add_key(key, 'year')
 
-            for month in schedule:
-                prin_data['values'].append([month['month'], month['principal']])
+    def add_key(self, key, term):
+        new_set = dict()
+        new_set['key'] = key.capitalize()
+        new_set['values'] = []
 
-            d3_data.insert(1, prin_data)
-    
-            int_data = {}
-    
-            int_data['key'] = "Interest"
-            int_data['values'] = []
-    
-            for month in schedule:
-                int_data['values'].append([month['month'], month['interest']])
-    
-            d3_data.insert(2, int_data)
-    
-            return d3_data
+        for item in self.schedule:
+            new_set['values'].append([item[term], item[key]])
+
+        return new_set
