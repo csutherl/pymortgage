@@ -1,10 +1,15 @@
 import cherrypy
+import os
 
 from amortization import Amortization_Schedule
 from d3_schedule import D3_Schedule
 
+# static dir defined here for static content
+STATIC_DIR = os.path.abspath(os.path.dirname(__file__))
+
 
 class REST_Server:
+    exposed = True
 
     def __init__(self):
         self.am_sched = Amortization_Schedule(.0425, 245000, 360)
@@ -13,7 +18,7 @@ class REST_Server:
 
     # if you were to request /foo/bar?woo=hoo, vpath[0] would be bar, and params would be {'woo': 'hoo'}.
     def GET(self, *vpath, **params):
-        if vpath[0] is None:
+        if len(vpath) is 0:
             return "Here is the schedule on file: %s" % self.am_sched.schedule
         
         if vpath[0] == 'd3':
@@ -30,20 +35,36 @@ class REST_Server:
         
         return "No information for month %s" % vpath[0]
 
-    exposed = True
-
 
 def CORS():
     cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
+
+
+# this class just returns the chart html file
+class Root(object):
+    @cherrypy.expose
+    def index(self):
+        return open(os.path.join(STATIC_DIR, 'chart.html'))
 
 if __name__ == "__main__":
     cherrypy.tools.CORS = cherrypy.Tool('before_finalize', CORS)
     cherrypy.tree.mount(
         REST_Server(), '/api/amort',
-            {'/':
-                {'request.dispatch': cherrypy.dispatch.MethodDispatcher(), 'tools.CORS.on': True}
-            }
+        config={'/':
+            {'request.dispatch': cherrypy.dispatch.MethodDispatcher(), 'tools.CORS.on': True}
+        }
     )
+
+    cherrypy.tree.mount(Root(), '/', config={
+        '/': {
+            'tools.staticdir.on': True,
+            'tools.staticdir.dir': STATIC_DIR,
+        },
+        '/lib': {
+            'tools.staticdir.on': True,
+            'tools.staticdir.dir': '%s/../lib' % STATIC_DIR,
+        }
+    })
 
     cherrypy.engine.start()
     cherrypy.engine.block()

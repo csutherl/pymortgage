@@ -1,5 +1,6 @@
 import json
 
+
 class D3_Schedule:
 
     def __init__(self, schedule):
@@ -27,6 +28,7 @@ class D3_Schedule:
     def add_year_key(self, key):
         return self.add_key(key, 'year')
 
+    # color would be added to the new set for each key
     def add_key(self, key, term):
         new_set = dict()
         new_set['key'] = key.capitalize()
