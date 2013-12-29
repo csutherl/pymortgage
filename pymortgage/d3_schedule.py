@@ -9,24 +9,16 @@ class D3_Schedule:
     def get_d3_schedule(self, by_year=None):
             d3_data = []
 
+            keys = ['balance', 'principal', 'interest', 'amount']
+
             if by_year:
-                d3_data.insert(0, self.add_year_key("balance"))
-                d3_data.insert(1, self.add_year_key("principal"))
-                d3_data.insert(2, self.add_year_key("interest"))
-                d3_data.insert(3, self.add_year_key("amount"))
+                for i in range(len(keys)):
+                    d3_data.insert(i, self.add_key(keys[i], 'year'))
             else:
-                d3_data.insert(0, self.add_month_key("balance"))
-                d3_data.insert(1, self.add_month_key("principal"))
-                d3_data.insert(2, self.add_month_key("interest"))
-                d3_data.insert(3, self.add_month_key("amount"))
+                for i in range(len(keys)):
+                    d3_data.insert(i, self.add_key(keys[i], 'month'))
 
             return json.dumps(d3_data)
-
-    def add_month_key(self, key):
-        return self.add_key(key, 'month')
-
-    def add_year_key(self, key):
-        return self.add_key(key, 'year')
 
     # color would be added to the new set for each key
     def add_key(self, key, term):
