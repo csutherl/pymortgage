@@ -1,4 +1,13 @@
-d3.json("http://localhost:8080/api/amort/d3", function(error, json) {
+var URL =  "http://localhost:8080/api/d3/amort/year";
+var term;
+
+if (URL.indexOf("year") != -1)
+    term = "Year";
+else
+    term = "Month";
+
+
+d3.json(URL, function(error, json) {
     if (error) return console.warn(error);
     var data = json;
 
@@ -8,7 +17,7 @@ d3.json("http://localhost:8080/api/amort/d3", function(error, json) {
             .y(function(d) { return d[1] });
 
         chart1.xAxis
-            .axisLabel("Month")
+            .axisLabel(term)
             .tickFormat(d3.format("d"));
 
         chart1.yAxis
@@ -32,7 +41,7 @@ d3.json("http://localhost:8080/api/amort/d3", function(error, json) {
         chart2.stacked(true);
 
         chart2.xAxis
-            .axisLabel("Month")
+            .axisLabel(term)
             .tickFormat(d3.format("d"));
 
         chart2.yAxis

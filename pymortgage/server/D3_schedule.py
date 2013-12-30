@@ -9,14 +9,15 @@ class D3_Schedule:
     def get_d3_schedule(self, by_year=None):
             d3_data = []
 
-            keys = ['balance', 'principal', 'interest', 'amount']
+            keys = ['balance', 'principal', 'interest', 'amount', 'insurance', 'taxes']
 
             if by_year:
-                for i in range(len(keys)):
-                    d3_data.insert(i, self.add_key(keys[i], 'year'))
+                term = 'year'
             else:
-                for i in range(len(keys)):
-                    d3_data.insert(i, self.add_key(keys[i], 'month'))
+                term = 'month'
+
+            for i in range(len(keys)):
+                d3_data.insert(i, self.add_key(keys[i], term))
 
             return json.dumps(d3_data)
 

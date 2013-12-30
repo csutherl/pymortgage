@@ -1,4 +1,4 @@
-from pymortgage.amortization import Amortization_Schedule
+from pymortgage.server.amortization import Amortization_Schedule
 
 schedule = Amortization_Schedule.create_schedule(.05, 250000, 360)
 
