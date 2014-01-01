@@ -1,14 +1,10 @@
 __author__ = 'coty'
 
-from pymortgage.server.amortization import Amortization_Schedule
 from Api_helper import parse_params
 
 
 class REST_Server:
     exposed = True
-
-    def __init__(self):
-        self.am_sched = Amortization_Schedule(.0425, 245000, 360, 1836, 1056)
 
     # if you were to request /foo/bar?woo=hoo, vpath[0] would be bar, and params would be {'woo': 'hoo'}.
     def GET(self, *vpath, **params):
