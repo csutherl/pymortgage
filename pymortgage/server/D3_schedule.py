@@ -3,10 +3,11 @@ import json
 
 class D3_Schedule:
 
-    def __init__(self, schedule):
-        self.schedule = schedule
+    def __init__(self, am_schedule):
+        self.monthly_d3_schedule = self.get_d3_schedule(am_schedule.monthly_schedule)
+        self.yearly_d3_schedule = self.get_d3_schedule(am_schedule.yearly_schedule, True)
 
-    def get_d3_schedule(self, by_year=None):
+    def get_d3_schedule(self, schedule, by_year=None):
             d3_data = []
 
             keys = ['balance', 'principal', 'interest', 'amount', 'insurance', 'taxes']
@@ -17,17 +18,17 @@ class D3_Schedule:
                 term = 'month'
 
             for i in range(len(keys)):
-                d3_data.insert(i, self.add_key(keys[i], term))
+                d3_data.insert(i, self.add_key(schedule, keys[i], term))
 
             return json.dumps(d3_data)
 
     # color would be added to the new set for each key
-    def add_key(self, key, term):
+    def add_key(self, schedule, key, term):
         new_set = dict()
         new_set['key'] = key.capitalize()
         new_set['values'] = []
 
-        for item in self.schedule:
+        for item in schedule:
             new_set['values'].append([item[term], item[key]])
 
         return new_set

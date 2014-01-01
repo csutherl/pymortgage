@@ -1,6 +1,6 @@
-var URL =  "http://localhost:8080/api/d3/amort/year";
-var term;
+var URL =  "http://localhost:8080/api/d3/amort?r=.0425&P=245000&n=360&t=1836&i=1056&af=2&ac=.01&lc=.06";
 
+var term;
 if (URL.indexOf("year") != -1)
     term = "Year";
 else
