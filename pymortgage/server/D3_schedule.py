@@ -10,7 +10,7 @@ class D3_Schedule:
     def get_d3_schedule(self, schedule, by_year=None):
             d3_data = []
 
-            keys = ['balance', 'principal', 'interest', 'amount', 'insurance', 'taxes']
+            keys = ['balance', 'principal', 'interest', 'amount', 'insurance', 'taxes', 'extra_payment']
 
             if by_year:
                 term = 'year'

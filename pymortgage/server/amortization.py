@@ -4,7 +4,8 @@ from pymortgage.server.amortization_calculator import calc_amortization
 class Amortization_Schedule:
 
     # assuming adj_frequency is always expressed in years, and adj_cap and lifetime_cap are expressed as decimals
-    def __init__(self, rate, P, n, annual_tax, annual_ins, adj_frequency=None, adj_cap=None, lifetime_cap=None):
+    def __init__(self, rate, P, n, annual_tax, annual_ins, adj_frequency=None, adj_cap=None, lifetime_cap=None,
+                 extra_pmt=None):
         self.rate = rate
         self.P = P
         self.n = n
@@ -24,12 +25,21 @@ class Amortization_Schedule:
         if self.lifetime_cap is not None:
             self.lifetime_cap += self.rate
 
+        # adding new var for recording and calculating amort after making extra payments
+        if extra_pmt is None:
+            self.extra_pmt = 0
+        else:
+            self.extra_pmt = extra_pmt
+
+        # create schedules in instance
         self.monthly_schedule = self.create_monthly_schedule()
         self.yearly_schedule = self.create_yearly_schedule()
 
     def create_monthly_schedule(self):
         temp_schedule = []
-        new_prin = self.P
+
+        # TODO: Figure out if this is correct...subtract extra from principal before calculation??
+        new_prin = self.P - self.extra_pmt
 
         count_n = self.n
         start_n = count_n
@@ -49,6 +59,7 @@ class Amortization_Schedule:
             new_prin = curr_month['balance']
             curr_month['taxes'] = self.monthly_tax
             curr_month['insurance'] = self.monthly_insurance
+            curr_month['extra_payment'] = self.extra_pmt
 
             # add taxes and insurance to the amount
             curr_month['amount'] += self.monthly_tax + self.monthly_insurance
@@ -83,6 +94,7 @@ class Amortization_Schedule:
             group_schedule['principal'] = 0
             group_schedule['amount'] = 0
             group_schedule['balance'] = year_end_balance[key]
+            group_schedule['extra_payment'] = 0
 
             # insert taxes and insurance
             group_schedule['insurance'] = self.annual_ins
@@ -92,6 +104,7 @@ class Amortization_Schedule:
                 group_schedule['interest'] += year['interest']
                 group_schedule['principal'] += year['principal']
                 group_schedule['amount'] += year['amount']
+                group_schedule['extra_payment'] += year['extra_payment']
 
             yearly_schedule.append(group_schedule)
 

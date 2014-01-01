@@ -67,7 +67,7 @@ d3.json(URL, function(error, data) {
     nv.addGraph(getStackedChart("#twentyyr-stacked svg", data));
 });
 
-URL =  "http://localhost:8080/api/d3/amort?r=.0425&P=245000&n=360&t=1836&i=1056&af=2&ac=.01&lc=.06";
+URL =  "http://localhost:8080/api/d3/amort?r=.0425&P=245000&n=360&t=1836&i=1056&af=2&ac=.01&lc=.06&e=100";
 d3.json(URL, function(error, data) {
     if (error) return console.warn(error);
 
