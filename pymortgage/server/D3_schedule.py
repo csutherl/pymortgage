@@ -1,11 +1,13 @@
-import json
-
-
 class D3_Schedule:
 
-    def __init__(self, am_schedule):
-        self.monthly_d3_schedule = self.get_d3_schedule(am_schedule.monthly_schedule)
-        self.yearly_d3_schedule = self.get_d3_schedule(am_schedule.yearly_schedule, True)
+    def __init__(self, am_schedule, range=False):
+        if range:
+            # TODO: Fix this junk. reallyyy didnt want to do this but I am super tired.
+            self.monthly_d3_schedule = self.get_d3_schedule(am_schedule)
+            self.yearly_d3_schedule = self.get_d3_schedule(am_schedule, True)
+        else:
+            self.monthly_d3_schedule = self.get_d3_schedule(am_schedule.monthly_schedule)
+            self.yearly_d3_schedule = self.get_d3_schedule(am_schedule.yearly_schedule, True)
 
     def get_d3_schedule(self, schedule, by_year=None):
             d3_data = []
@@ -20,7 +22,7 @@ class D3_Schedule:
             for i in range(len(keys)):
                 d3_data.insert(i, self.add_key(schedule, keys[i], term))
 
-            return json.dumps(d3_data)
+            return d3_data
 
     # color would be added to the new set for each key
     def add_key(self, schedule, key, term):

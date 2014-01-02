@@ -2,6 +2,7 @@ __author__ = 'coty'
 
 from Api_helper import parse_params
 from pymortgage.server.D3_schedule import D3_Schedule
+import json
 
 
 class D3_Server:
@@ -14,10 +15,37 @@ class D3_Server:
         if am_sched is None:
             return "Not enough parameters provided."
 
-        d3_sched = D3_Schedule(am_sched)
         # rate, P, n, annual_tax, annual_ins, adj_frequency, adj_cap, lifetime_cap
         if len(vpath) > 0:
             if vpath[0] == 'year':
-                return d3_sched.yearly_d3_schedule
+                # TODO: Fix this redundant code...
+                if len(vpath) >= 3:
+                    try:
+                        start = int(vpath[0])
+                        end = int(vpath[1])
+                    except:
+                        raise Exception("Range parameters are not integers.")
 
-        return d3_sched.monthly_d3_schedule
+                    if start > end:
+                        raise Exception("Range start is greater than range end.")
+
+                    d3_sched = D3_Schedule(am_sched.get_range('year', start, end), range=True)
+                else:
+                    d3_sched = D3_Schedule(am_sched)
+
+                return json.dumps(d3_sched.yearly_d3_schedule)
+            elif len(vpath) >= 2:
+                try:
+                    start = int(vpath[0])
+                    end = int(vpath[1])
+                except:
+                    raise Exception("Range parameters are not integers.")
+
+                if start > end:
+                    raise Exception("Range start is greater than range end.")
+
+                d3_sched = D3_Schedule(am_sched.get_range('month', start, end), range=True)
+                return json.dumps(d3_sched.monthly_d3_schedule)
+
+        d3_sched = D3_Schedule(am_sched)
+        return json.dumps(d3_sched.monthly_d3_schedule)

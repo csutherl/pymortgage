@@ -114,11 +114,25 @@ class Amortization_Schedule:
 
         return yearly_schedule
 
-    def get_first_x(self, num_of_items):
+    def get_range(self, term, start, end):
         subset = []
+        schedule = None
 
-        for x in range(num_of_items):
-            subset.insert(x, self.monthly_schedule[x])
+        if term == 'month':
+            schedule = self.monthly_schedule
+        elif term == 'year':
+            schedule = self.yearly_schedule
+        else:
+            raise Exception("Invalid term selected.")
+
+        if start > 0:
+            counter = start - 1  # subtract one to make it zero based again
+        else:
+            counter = start
+
+        while counter < end:
+            subset.append(schedule[counter])
+            counter += 1
 
         return subset
 
@@ -130,4 +144,5 @@ if __name__ == "__main__":
     pp = pprint.PrettyPrinter(indent=4)
     # pp.pprint(am_sched.monthly_schedule)
 
-    pp.pprint(am_sched.get_first_x(26))
+    pp.pprint(am_sched.get_range('month', 2, 5))
+    # pp.pprint(am_sched.get_range('year', 2, 5))
