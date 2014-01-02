@@ -38,8 +38,7 @@ class Amortization_Schedule:
     def create_monthly_schedule(self):
         temp_schedule = []
 
-        # TODO: Figure out if this is correct...subtract extra from principal before calculation??
-        new_prin = self.P - self.extra_pmt
+        new_prin = self.P
 
         count_n = self.n
         start_n = count_n
@@ -55,15 +54,21 @@ class Amortization_Schedule:
 
             curr_month = calc_amortization(self.rate, new_prin, count_n)
             curr_month['month'] = current_month + 1  # to make it one based
-            curr_month['balance'] = round(new_prin - curr_month['principal'], 2)
+            curr_month['balance'] = round(new_prin - curr_month['principal'] - self.extra_pmt, 2)
+
+            # balance cant be < 0...it makes other things less...
+            if curr_month['balance'] < 0:
+                curr_month['balance'] = 0
+
             new_prin = curr_month['balance']
             curr_month['taxes'] = self.monthly_tax
             curr_month['insurance'] = self.monthly_insurance
             curr_month['extra_payment'] = self.extra_pmt
 
-            # add taxes and insurance to the amount
-            curr_month['amount'] += self.monthly_tax + self.monthly_insurance
+            # add taxes and insurance to the amount and extra payment
+            curr_month['amount'] += self.monthly_tax + self.monthly_insurance + self.extra_pmt
 
+            print curr_month
             count_n -= 1
 
             temp_schedule.append(curr_month)
