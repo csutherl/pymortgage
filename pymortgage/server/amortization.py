@@ -22,8 +22,9 @@ class Amortization_Schedule:
         self.lifetime_cap = lifetime_cap
 
         # correct lifetime_cap by adding it to initial rate
+        # added .000001 b/c the 5 year ARM wasnt adjusting the last time.
         if self.lifetime_cap is not None:
-            self.lifetime_cap += self.rate
+            self.lifetime_cap += self.rate + .000001
 
         # adding new var for recording and calculating amort after making extra payments
         if extra_pmt is None:
