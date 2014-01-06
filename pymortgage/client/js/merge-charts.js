@@ -78,15 +78,18 @@ function mergeData(keys, ds0, ds1) {
 }
 
 function visualizeIt(){
+    var base_URL = "http://localhost:8080/api/d3/amort";
+    var range = ""; //"/1/61";
+
     var twentyyr_data;
     var twentyyr_extra_data;
 
-    var twentyyr_URL =  "http://localhost:8080/api/d3/amort/1/36?r=.0425&P=245000&n=360&t=1836&i=1056&af=2&ac=.01&lc=.06";
+    var twentyyr_URL =  base_URL.concat(range, "?r=.045&P=245000&n=360&t=1836&i=1056&af=5&ac=.02&lc=.06");
     d3.json(twentyyr_URL, function(error, data) {
         if (error) return console.warn(error);
         twentyyr_data = data;
 
-        var twentyyr_extra_URL =  "http://localhost:8080/api/d3/amort/1/36?r=.0425&P=245000&n=360&t=1836&i=1056&af=2&ac=.01&lc=.06&e=275";
+        var twentyyr_extra_URL = base_URL.concat(range, "?r=.0425&P=245000&n=360&t=1836&i=1056&af=2&ac=.01&lc=.06");
         d3.json(twentyyr_extra_URL, function(error, extra_data) {
             if (error) return console.warn(error);
             twentyyr_extra_data = extra_data;
