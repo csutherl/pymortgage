@@ -68,6 +68,8 @@ class Amortization_Schedule:
 
             # add taxes and insurance to the amount and extra payment
             curr_month['amount'] += self.monthly_tax + self.monthly_insurance + self.extra_pmt
+            # add extra payment amount to principal for the month
+            curr_month['principal'] += self.extra_pmt
 
             count_n -= 1
 
