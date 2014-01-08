@@ -41,5 +41,6 @@ if __name__ == "__main__":
 
     cherrypy.tree.mount(GetChart(), '/', config=static_conf)
 
+    cherrypy.server.bind_addr = ('0.0.0.0', 8080)
     cherrypy.engine.start()
     cherrypy.engine.block()
