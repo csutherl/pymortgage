@@ -13,7 +13,7 @@ def CORS():
 class GetChart(object):
     @cherrypy.expose
     def index(self):
-        return open(os.path.join(STATIC_DIR, 'fixed-chart.html'))
+        return open(os.path.join(STATIC_DIR, 'index.html'))
 
 if __name__ == "__main__":
     from REST_Api import REST_Server
