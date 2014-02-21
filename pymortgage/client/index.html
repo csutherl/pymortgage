@@ -2,52 +2,80 @@
 <html>
     <head>
         <title>Amortization Schedule Calculator</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <script src="js/jquery.js"></script>
+        <script src="js/bootstrap.js"></script>
+        <!--NVD3 stuffs-->
+        <link href="js/nv.d3.css" rel="stylesheet" type="text/css">
+        <script src="js/d3.v3.js"></script>
+        <script src="js/nv.d3.js"></script>
     </head>
     <body>
-        <h3>Amortization Schedule Calculator</h3>
-        <form name="input" action="parser.html" method="get">
-            <table>
-                <tr>
-                    <td>Loan Amount:</td><td><input type="text" name="P" value="240000"></td>
-                </tr>
-                <tr>
-                    <td>Interest Rate:</td><td><input type="text" name="r" value="4.5"></td>
-                </tr>
-                <tr>
-                    <td>Term:</td><td><input type="text" name="n" value="360"></td>
-                </tr>
-                <tr>
-                    <td>Annual Taxes:</td><td><input type="text" name="t" value="1000"></td>
-                </tr>
-                <tr>
-                    <td>Annual Insurance:</td><td><input type="text" name="i" value="1000"></td>
-                </tr>
-                <tr>
-                    <td>Amoritization:</td>
-                    <td>
-                        <input type="radio" name="amort" value="month" checked>By Month
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        <input type="radio" name="amort" value="year">By Year
-                    </td>
-                </tr>
-                <tr>
-                    <td>Mortgage Type:</td>
-                    <td>
-                        <input type="radio" name="mort-type" value="fixed" checked>Fixed
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        <input type="radio" name="mort-type" value="arm">Adjustable Rate
-                    </td>
-                </tr>
-            </table>
-            <input type="submit" value="Submit">
-        </form>
+    <div class='container-fluid'>
+        <div class="row-fluid">
+            <div class="span4">
+                <div class='well sidebar-nav'>
+                <!-- Sidebar form -->
+                <h3>Amortization Schedule Calculator</h3>
+                <form name="input" action="parser.html" method="get">
+                    <table>
+                        <tr>
+                            <td>Loan Amount:</td><td><input type="text" name="P" value="240000"></td>
+                        </tr>
+                        <tr>
+                            <td>Interest Rate:</td><td><input type="text" name="r" value="4.5"></td>
+                        </tr>
+                        <tr>
+                            <td>Term:</td><td><input type="text" name="n" value="360"></td>
+                        </tr>
+                        <tr>
+                            <td>Annual Taxes:</td><td><input type="text" name="t" value="1000"></td>
+                        </tr>
+                        <tr>
+                            <td>Annual Insurance:</td><td><input type="text" name="i" value="1000"></td>
+                        </tr>
+                        <tr>
+                            <td>Amoritization:</td>
+                            <td>
+                                <input type="radio" name="amort" value="month" checked>By Month
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <input type="radio" name="amort" value="year">By Year
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Mortgage Type:</td>
+                            <td>
+                                <input type="radio" name="mort-type" value="fixed" checked>Fixed
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <input type="radio" name="mort-type" value="arm">Adjustable Rate
+                            </td>
+                        </tr>
+                    </table>
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
+            </div>
+            <div class='span8'>
+                <!--Graph content-->
+                <div id='chart1'>
+                    <!--<svg style="height:500px;width:80%;padding:30px;float:right"/>-->
+                    <svg style="height:500px;width:80%;padding:30px"/>
+                </div>
+                <div id='chart2'>
+                    <!--<svg style="height:300px;width:80%;padding:30px;float:right"/>-->
+                    <svg style="height:300px;width:80%;padding:30px"/>
+                </div>
+                <script src="js/fixed-chart.js"></script>
+            </div>
+        </div>
+    </div>
     </body>
 </html>
