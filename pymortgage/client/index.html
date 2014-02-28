@@ -17,60 +17,102 @@
                 <div class='well sidebar-nav'>
                 <!-- Sidebar form -->
                 <h3>Amortization Schedule Calculator</h3>
-                <form name="input" action="parser.html" method="get">
-                    <table>
+                <form name="input" action="javascript:updateChart()" method="get">
+                    <table id='formtable'>
                         <tr>
-                            <td>Loan Amount:</td><td><input type="text" name="P" value="240000"></td>
-                        </tr>
-                        <tr>
-                            <td>Interest Rate:</td><td><input type="text" name="r" value="4.5"></td>
-                        </tr>
-                        <tr>
-                            <td>Term:</td><td><input type="text" name="n" value="360"></td>
-                        </tr>
-                        <tr>
-                            <td>Annual Taxes:</td><td><input type="text" name="t" value="1000"></td>
-                        </tr>
-                        <tr>
-                            <td>Annual Insurance:</td><td><input type="text" name="i" value="1000"></td>
-                        </tr>
-                        <tr>
-                            <td>Amoritization:</td>
+                            <td>Loan Amount:</td>
                             <td>
-                                <input type="radio" name="amort" value="month" checked>By Month
+                                <div class='input-prepend'>
+                                    <span class='add-on'>$</span>
+                                    <input type="text" id="P" value="240000">
+                                </div>
                             </td>
                         </tr>
                         <tr>
-                            <td></td>
+                            <td>Interest Rate:</td>
                             <td>
-                                <input type="radio" name="amort" value="year">By Year
+                                <div class='input-append'>
+                                    <span class='add-on'>%</span>
+                                    <input type="text" id="r" value="4.5">
+                                 </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Term:</td>
+                            <td>
+                                <div class='input-append'>
+                                    <input type="text" id="n" value="360">
+                                    <div class='btn-group'>
+                                        <button id='termbtn' href='#' class="btn dropdown-toggle" data-toggle="dropdown" role='button'>
+                                            Year <span class='caret'></span>
+                                        </button>
+                                        <ul class='dropdown-menu' role='menu'>
+                                            <li><a role='menuitem' onclick="$('#termbtn').html('Year' + ' <span class=\'caret\'></span>' );">Year</a></li>
+                                            <li><a role='menuitem' onclick="$('#termbtn').html('Month' + ' <span class=\'caret\'></span>' );">Month</a></li>
+                                        </ul>
+                                    </div>
+                                 </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Annual Taxes:</td>
+                            <td>
+                                <div class='input-prepend'>
+                                    <span class='add-on'>$</span>
+                                    <input type="text" id="t" value="1000">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Annual Insurance:</td>
+                            <td>
+                                <div class='input-prepend'>
+                                    <span class='add-on'>$</span>
+                                    <input type="text" id="i" value="1000">
+                                </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Mortgage Type:</td>
                             <td>
-                                <input type="radio" name="mort-type" value="fixed" checked>Fixed
+                                <input type="radio" id="fixed_type" name='g1' checked> Fixed
                             </td>
                         </tr>
                         <tr>
                             <td></td>
                             <td>
-                                <input type="radio" name="mort-type" value="arm">Adjustable Rate
+                                <input type="radio" id="arm_type" name='g1'> Adjustable Rate
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Adjustment Frequency (in years): </td>
+                            <td>
+                                <input id='af' type='text' value='2'>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Adjustment Cap: </td>
+                            <td>
+                                <input id='ac' type='text' value='2'>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Lifetime Cap: </td>
+                            <td>
+                                <input id='lc' type='text' value='6'>
                             </td>
                         </tr>
                     </table>
-                    <input type="submit" value="Submit">
+                    <input class='btn' type="submit" value="Submit">
                 </form>
             </div>
             </div>
             <div class='span8'>
                 <!--Graph content-->
                 <div id='chart1'>
-                    <!--<svg style="height:500px;width:80%;padding:30px;float:right"/>-->
                     <svg style="height:500px;width:80%;padding:30px"/>
                 </div>
                 <div id='chart2'>
-                    <!--<svg style="height:300px;width:80%;padding:30px;float:right"/>-->
                     <svg style="height:300px;width:80%;padding:30px"/>
                 </div>
                 <script src="js/fixed-chart.js"></script>
