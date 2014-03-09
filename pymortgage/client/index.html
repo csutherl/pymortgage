@@ -17,7 +17,7 @@
                 <div class='well sidebar-nav'>
                 <!-- Sidebar form -->
                 <h3>Amortization Schedule Calculator</h3>
-                <form name="input" action="javascript:updateChart()" method="get">
+                <form name="input" action="javascript:submitUpdate()" method="get">
                     <table id='formtable'>
                         <tr>
                             <td>Loan Amount:</td>
@@ -31,7 +31,7 @@
                         <tr>
                             <td>Interest Rate:</td>
                             <td>
-                                <div class='input-append'>
+                                <div class='input-prepend'>
                                     <span class='add-on'>%</span>
                                     <input type="text" id="r" value="4.5">
                                  </div>
@@ -93,13 +93,19 @@
                         <tr>
                             <td>Adjustment Cap: </td>
                             <td>
-                                <input id='ac' type='text' value='2'>
+                                <div class='input-prepend'>
+                                    <span class='add-on'>%</span>
+                                    <input id='ac' type='text' value='2'>
+                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Lifetime Cap: </td>
                             <td>
-                                <input id='lc' type='text' value='6'>
+                                <div class='input-prepend'>
+                                    <span class='add-on'>%</span>
+                                    <input id='lc' type='text' value='6'>
+                                </div>
                             </td>
                         </tr>
                     </table>

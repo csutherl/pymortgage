@@ -1,11 +1,11 @@
-function updateChart() {
+function submitUpdate() {
     var base_URL =  "http://localhost:8080/api/d3/amort";
 
     var term = $('#termbtn').text();
     if (term.indexOf("Year") != -1)
-        base_URL = base_URL + '/year';
-
-    var params = "?";
+        base_URL += '/year?';
+    else
+        base_URL += "?";
 
     var rate = "r=" + ($('#r').val() / 100);
     var prin = "&P=" + $('#P').val();
@@ -13,14 +13,14 @@ function updateChart() {
     var taxes = "&t=" + $('#t').val();
     var ins = "&i=" + $('#i').val();
 
-    URL = base_URL + params + rate + prin + num + taxes + ins;
+    URL = base_URL + rate + prin + num + taxes + ins;
 
     if ($('#arm_type').is(':checked')) {
         var adj_freq = "&af=" + $('#af').val();
         var adj_cap = "&ac=" + ($('#ac').val() / 100);
         var life_cap = "&lc=" + ($('#lc').val() / 100);
 
-        URL = URL + adj_freq + adj_cap + life_cap;
+        URL += adj_freq + adj_cap + life_cap;
     }
 
     d3.json(URL, function(error, json) {
@@ -76,4 +76,4 @@ function updateChart() {
 }
 
 // initial display of the chart
-updateChart();
+submitUpdate();
