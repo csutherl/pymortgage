@@ -32,15 +32,16 @@ if __name__ == "__main__":
         '/': {
             'tools.staticdir.on': True,
             'tools.staticdir.dir': STATIC_DIR,
-        },
-        '/js': {
-            'tools.staticdir.on': True,
-            'tools.staticdir.dir': '%s/js' % STATIC_DIR,
         }
+        # ,
+        # '/js': {
+        #     'tools.staticdir.on': True,
+        #     'tools.staticdir.dir': '%s/js' % STATIC_DIR,
+        # }
     }
 
     cherrypy.tree.mount(GetChart(), '/', config=static_conf)
 
-    cherrypy.server.bind_addr = ('0.0.0.0', 8080)
+    cherrypy.server.bind_addr = ('0.0.0.0', 4001)
     cherrypy.engine.start()
     cherrypy.engine.block()

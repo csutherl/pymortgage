@@ -15,9 +15,9 @@
         <div class="row-fluid">
             <div class="span4">
                 <div class='well sidebar-nav'>
-                <!-- Sidebar form -->
-                <h3>Amortization Schedule Calculator</h3>
-                <form name="input" action="javascript:submitUpdate()" method="get">
+                     <!-- Sidebar form -->
+                    <h3>Amortization Schedule Calculator</h3>
+                    <form name="input" action="javascript:submitUpdate()" method="get">
                     <table id='formtable'>
                         <tr>
                             <td>Loan Amount:</td>
@@ -109,17 +109,19 @@
                             </td>
                         </tr>
                     </table>
-                    <input class='btn' type="submit" value="Submit">
-                </form>
-            </div>
+                    <input class='btn' type="btn" onclick='submitUpdate();' value="Update">
+                    <input class='btn' type='btn' onclick="addToChart();" value="Add to chart">
+                    </form>
+                    </br>
+                    <table id="myTable" style='display: None' class='table table-striped table-bordered'>
+                        <tr><td>Name</td><td>Amount</td><td>Rate</td><td>Term</td></tr>
+                    </table>
+                </div>
             </div>
             <div class='span8'>
                 <!--Graph content-->
                 <div id='chart1'>
                     <svg style="height:500px;width:80%;padding:30px"/>
-                </div>
-                <div id='chart2'>
-                    <svg style="height:300px;width:80%;padding:30px"/>
                 </div>
                 <script src="js/fixed-chart.js"></script>
             </div>
