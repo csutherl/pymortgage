@@ -1,3 +1,5 @@
+var dataSet = [];
+
 function getInput(name) {
     return $('#' + name).val();
 }
@@ -33,8 +35,9 @@ function buildURL() {
     return [URL, term];
 }
 
-function addToChart() {
+function addToChart(add) {
     name = prompt("Please name this mortgage: ", "Mortgage 1");
+    add = typeof add !== 'undefined' ? add : true;
 
     if (name != 'null') {
         $('#myTable').show();
@@ -44,17 +47,36 @@ function addToChart() {
             .after('<td>' + getInput('P') + '</td>')
             .after('<td>' + name + '</td>')
             .after('</tr>');
+
+        submitUpdate(name, add);
     }
 }
 
-function submitUpdate() {
+function submitUpdate(name, add) {
+    // default for name
+    name = typeof name !== 'undefined' ? name : "";
+    add = typeof add !== 'undefined' ? add : false;
+
     val = buildURL();
     URL = val[0];
     term = val[1];
 
     d3.json(URL, function(error, json) {
         if (error) return console.warn(error);
-        var data = json;
+
+        if (add) {
+            json.forEach(function(d) {
+                var new_key = name + " " + d['key'];
+                console.debug("Old key: " + d['key'] + " New key: " + new_key);
+                d['key'] = new_key;
+
+                dataSet.push(d);
+            });
+        } else {
+            dataSet = json;
+        }
+
+        console.info("Length " + dataSet.length);
 
         nv.addGraph(function() {
             var chart1 = nv.models.lineChart()
@@ -70,7 +92,7 @@ function submitUpdate() {
                 .tickFormat(d3.format(",.2f"));
 
             d3.select("#chart1 svg")
-                .datum(data)
+                .datum(dataSet)
                 .transition().duration(500).call(chart1);
 
             nv.utils.windowResize(chart1.update);
@@ -81,4 +103,4 @@ function submitUpdate() {
 }
 
 // initial display of the chart
-submitUpdate();
+//submitUpdate();
