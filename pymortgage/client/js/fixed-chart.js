@@ -40,13 +40,10 @@ function addToChart(add) {
     add = typeof add !== 'undefined' ? add : true;
 
     if (name != 'null') {
+        var name_without_spaces = name.replace(/\s+/g, '');
         $('#myTable').show();
-        $('#myTable tr:last').after('<tr>')
-            .after('<td>' + getInput('t') + '</td>')
-            .after('<td>' + getInputAsPercent('r') + '</td>')
-            .after('<td>' + getInput('P') + '</td>')
-            .after('<td>' + name + '</td>')
-            .after('</tr>');
+        <!-- my clickable rows :) Need to implement some select action on click that way you can remove/update the chart's data -->
+        $('#myTable tr:last').after('<tr onclick=alert(\'' + name_without_spaces +'\');>' + '<td>' + getInput('t') + '</td>' + '<td>' + getInputAsPercent('r') + '</td>' + '<td>' + getInput('P') + '</td>' + '<td>' + name + '</td>' + '</tr>');
 
         submitUpdate(name, add);
     }
@@ -73,6 +70,7 @@ function submitUpdate(name, add) {
                 dataSet.push(d);
             });
         } else {
+            <!-- Will need to change this else to handle selecting a row, then updating its data -->
             dataSet = json;
         }
 

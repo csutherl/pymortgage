@@ -2,9 +2,11 @@
 <html>
     <head>
         <title>Amortization Schedule Calculator</title>
-        <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
         <script src="js/jquery.js"></script>
-        <script src="js/bootstrap.js"></script>
+        <!--<link href="css/bootstrap.css" rel="stylesheet" media="screen">-->
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <!--<script src="js/bootstrap.js"></script>-->
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
         <!--NVD3 stuffs-->
         <link href="js/nv.d3.css" rel="stylesheet" type="text/css">
         <script src="js/d3.v3.js"></script>
@@ -14,7 +16,7 @@
     <div class='container-fluid'>
         <div class="row-fluid">
             <div class="span4">
-                <div class='well sidebar-nav'>
+                <div class='well navbar-left navbar-form'>
                      <!-- Sidebar form -->
                     <h3>Amortization Schedule Calculator</h3>
                     <form name="input" action="javascript:submitUpdate()" method="get">
@@ -109,11 +111,11 @@
                             </td>
                         </tr>
                     </table>
-                    <input class='btn' type="btn" onclick='submitUpdate();' value="Update">
-                    <input class='btn' type='btn' onclick="addToChart();" value="Add to chart">
+                    <input class='btn btn-default' type='button' onclick='submitUpdate();' value="Update">
+                    <input class='btn btn-default' type='button' onclick="addToChart();" value="Add to chart">
                     </form>
                     </br>
-                    <table id="myTable" style='display: None' class='table table-striped table-bordered'>
+                    <table id="myTable" style='display: None' class='table table-bordered table-striped table-hover'>
                         <tr><td>Name</td><td>Amount</td><td>Rate</td><td>Term</td></tr>
                     </table>
                 </div>
