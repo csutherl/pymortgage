@@ -1,4 +1,3 @@
-var dataSet = [];
 var indexedSet = [];
 var selectedRow = 'null';
 
@@ -32,16 +31,22 @@ function buildURL() {
 }
 
 function addToChart(add) {
-    name = prompt("Please name this mortgage: ", "Mortgage 1");
+    var name = prompt("Please name this mortgage: ", "Mortgage 1");
     add = typeof add !== 'undefined' ? add : true;
 
     if (name != 'null' && !checkName(name)) {
         var name_without_spaces = name.replace(/\s+/g, ';;;');
+
+        // show table after adding first row
         $('#myTable').show();
+
         <!-- my clickable rows :) Need to implement some select action on click that way you can remove/update the chart's data -->
-//        $('#myTable tr:last').after('<tr onclick=selectRow(\'' + name_without_spaces +'\');>' + '<td>' + name + '</td>' + '<td>' + getPrin() + '</td>' + '<td>' + getRate() + '%</td>' + '<td>' + getTerm() + '</td>' + '</tr>');
-        $('#myTable tr:last').after('<tr onclick=selectRow(' + indexedSet.length +'); id=' + name_without_spaces + '>' + '<td id=\'name\'>' + name + '</td>' + '<td id=\'P\'>' + getPrin() + '</td>' + '<td id=\'r\'>' + getRate() +
-            '%</td>' + '<td id=\'n\'>' + getTerm() + '</td>' + '</tr>');
+        $('#myTable tr:last').after('<tr onclick=selectRow(' + indexedSet.length +'); id=' + name_without_spaces + '>' +
+            '<td id=\'name\'>' + name + '</td>' +
+            '<td id=\'P\'>' + getPrin() + '</td>' +
+            '<td id=\'r\'>' + getRate() +
+            '%</td>' + '<td id=\'n\'>' + getTerm() + '</td>' +
+            '</tr>');
 
         // build index for mortgage
         var mort = getFormState();
@@ -53,7 +58,7 @@ function addToChart(add) {
 }
 
 function getFormState() {
-    var json = {'P': getPrin(), 'r': getRate(), 'n': getTerm(), 'i': getIns(), 't': getTax(), 'af': getAdjFreq(), 'ac': getAdjCap(), 'lc': getLifetimeCap()};
+    var json = { 'formstate': {'P': getPrin(), 'r': getRate(), 'n': getTerm(), 'i': getIns(), 't': getTax(), 'af': getAdjFreq(), 'ac': getAdjCap(), 'lc': getLifetimeCap()}};
     console.debug("Form state: " + JSON.stringify(json));
 
     return json;
@@ -64,19 +69,21 @@ function selectRow(rowNum) {
     selectedRow = rowNum;
 
     // update form with selected row
-    var temp = indexedSet[selectedRow];
-    for (key in temp) {
+    var temp = indexedSet[selectedRow]['formstate'];
+    for (var key in temp) {
         setInput(key, temp[key]);
     }
 }
 
 function updateCurrentRow() {
+    // Update the table row
     // grab the indexed data and set the form according to the row selected
     var temp = indexedSet[selectedRow];
     console.debug("Old row: " + JSON.stringify(temp));
     var name = temp['name'];
     var new_set = getFormState();
     new_set['name'] = name;
+    new_set['data'] = temp['data']; // transpose data to new set
     console.debug("New row: " + JSON.stringify(new_set));
 
     // update table
@@ -84,11 +91,11 @@ function updateCurrentRow() {
         if ($(this).attr('id') == name.replace(/\s+/g, ';;;')) {
             $(this).find('td').each(function() {
                 var id = $(this).attr('id');
-                $(this).text(new_set[id]);
+                $(this).text(new_set['formstate'][id]);
 
                 // add a % sign to the rate cell
                 if (id == 'r') {
-                    $(this).text(new_set[id] + "%");
+                    $(this).text(new_set['formstate'][id] + "%");
                 }
             });
         }
@@ -99,7 +106,7 @@ function updateCurrentRow() {
 }
 
 function checkName(name) {
-    for (i in indexedSet) {
+    for (var i in indexedSet) {
         if (name == indexedSet[i]['name']) {
             return true;
         }
@@ -112,11 +119,23 @@ function tryUpdate() {
     if (selectedRow != 'null') {
         // only update when  row is selected
         submitUpdate();
-        // we should also save the data to the indexedSet and update the table row as well here
-        updateCurrentRow();
     } else {
         alert("Please select a row to update or add a mortgage to the chart.");
     }
+}
+
+function getDataSet() {
+    var temp = [];
+
+    for (var key in indexedSet) {
+        var data = indexedSet[key]['data'];
+
+        for (var dkey in data) {
+            temp.push(data[dkey]);
+        }
+    }
+
+    return temp;
 }
 
 function submitUpdate(name, add) {
@@ -124,15 +143,16 @@ function submitUpdate(name, add) {
     name = typeof name !== 'undefined' ? name : "";
     add = typeof add !== 'undefined' ? add : false;
 
-    val = buildURL();
-    URL = val[0];
-    term = val[1];
+    var val = buildURL();
+    var URL = val[0];
+    var term = val[1];
     console.debug("Update URL: " + URL);
 
     d3.json(URL, function(error, json) {
         if (error) return console.warn(error);
 
         if (add) {
+            var dataSet = [];
             json.forEach(function(d) {
                 var new_key = name + " " + d['key'];
                 console.debug("Old key: " + d['key'] + " New key: " + new_key);
@@ -140,15 +160,29 @@ function submitUpdate(name, add) {
 
                 dataSet.push(d);
             });
-        } else {
-            <!-- Will need to change this else to handle selecting a row, then updating its data -->
-            dataSet = json;
-        }
 
-        console.info("Length " + dataSet.length);
+            for (var key in indexedSet) {
+                if (name == indexedSet[key]['name']) {
+                    indexedSet[key]['data'] = dataSet;
+                    console.debug("Added data to set: " + JSON.stringify(indexedSet[key]));
+                }
+            }
+        } else {
+            updateCurrentRow();
+
+            indexedSet[selectedRow]['data'] = [];
+            json.forEach(function(d) {
+                var new_key = indexedSet[selectedRow]['name'] + " " + d['key'];
+                console.debug("Old key: " + d['key'] + " New key: " + new_key);
+                d['key'] = new_key;
+
+                indexedSet[selectedRow]['data'].push(d);
+            });
+        }
 
         nv.addGraph(function() {
             var chart1 = nv.models.lineChart()
+                .margin({top: 30, right: 300, bottom: 50, left: 300})
                 .x(function(d) { return d[0] })
                 .y(function(d) { return d[1] });
 
@@ -161,7 +195,7 @@ function submitUpdate(name, add) {
                 .tickFormat(d3.format(",.2f"));
 
             d3.select("#chart1 svg")
-                .datum(dataSet)
+                .datum(getDataSet())
                 .transition().duration(500).call(chart1);
 
             nv.utils.windowResize(chart1.update);
@@ -169,6 +203,36 @@ function submitUpdate(name, add) {
             return chart1;
         });
     });
+
+    /* linePlusBarChart */
+    /*
+    d3.json(URL,function(error,data) {
+        nv.addGraph(function() {
+            var chart = nv.models.linePlusBarChart()
+                .margin({top: 30, right: 200, bottom: 50, left: 200})
+                //We can set x data accessor to use index. Reason? So the bars all appear evenly spaced.
+                .x(function(d) { return d[0] })
+                .y(function(d) {return d[1] });
+
+            chart.xAxis.axisLabel(term);
+
+            chart.y1Axis
+                .tickFormat(d3.format(',f'));
+
+            chart.y2Axis.axisLabel("two");
+
+            d3.select('#chart2 svg')
+                .datum(data)
+                .transition()
+                .duration(0)
+                .call(chart);
+
+            nv.utils.windowResize(chart.update);
+
+            return chart;
+        });
+    });
+    */
 }
 
 // initial display of the chart
