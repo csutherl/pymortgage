@@ -182,7 +182,7 @@ function submitUpdate(name, add) {
 
         nv.addGraph(function() {
             var chart1 = nv.models.lineChart()
-                .margin({top: 30, right: 300, bottom: 50, left: 300})
+//                .margin({top: 0, right: 100, bottom: 50, left: 100})
                 .x(function(d) { return d[0] })
                 .y(function(d) { return d[1] });
 
