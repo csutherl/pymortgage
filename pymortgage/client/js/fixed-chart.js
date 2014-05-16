@@ -3,6 +3,7 @@ var selectedRow = 'null';
 
 function buildURL() {
 //    var base_URL =  "http://10.13.153.78:4001/api/d3/amort";
+//    var base_URL =  "http://10.10.55.54:4001/api/d3/amort";
     var base_URL =  "http://localhost:4001/api/d3/amort";
 
     var term = $('#termbtn').text();
@@ -58,7 +59,7 @@ function addToChart(add) {
 }
 
 function getFormState() {
-    var json = { 'formstate': {'P': getPrin(), 'r': getRate(), 'n': getTerm(), 'i': getIns(), 't': getTax(), 'af': getAdjFreq(), 'ac': getAdjCap(), 'lc': getLifetimeCap()}};
+    var json = { 'formstate': {'P': getPrin(), 'r': getRate(), 'n': getTerm(), 'i': getIns(), 't': getTax(), 'af': getAdjFreq(), 'ac': getAdjCap(), 'lc': getLifetimeCap(), 'termbtn': $('#termbtn').html()}};
     console.debug("Form state: " + JSON.stringify(json));
 
     return json;
@@ -71,7 +72,12 @@ function selectRow(rowNum) {
     // update form with selected row
     var temp = indexedSet[selectedRow]['formstate'];
     for (var key in temp) {
-        setInput(key, temp[key]);
+        // Added this check to fix issue #6. Now the form updates completely.
+        if (key == 'termbtn') {
+            $('#' + key).html(temp[key]);
+        } else {
+           setInput(key, temp[key]);
+        }
     }
 }
 
