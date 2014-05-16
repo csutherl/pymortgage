@@ -18,7 +18,10 @@ function buildURL() {
     var taxes = "&t=" + getTax();
     var ins = "&i=" + getIns();
 
-    URL = base_URL + rate + prin + num + taxes + ins;
+    // monthly extra
+    var extra = "&e=" + getInput('e');
+
+    URL = base_URL + rate + prin + num + taxes + ins + extra;
 
     if ($('#arm_type').is(':checked')) {
         var adj_freq = "&af=" + getAdjFreq();
@@ -70,6 +73,7 @@ function getFormState() {
         'af': getAdjFreq(),
         'ac': getAdjCap(),
         'lc': getLifetimeCap(),
+        'e': getInput('e'),
         'fixed_type': $('#fixed_type').is(':checked'),
         'arm_type': $('#arm_type').is(':checked'),
         'termbtn': $('#termbtn').html()
@@ -114,17 +118,15 @@ function updateCurrentRow() {
 
     // update table
     $('#row_' + selectedRow).each(function() {
-//        if ($(this).attr('id') == name.replace(/\s+/g, ';;;')) {
-            $(this).find('td').each(function() {
-                var id = $(this).attr('id');
-                $(this).text(new_set['formstate'][id]);
+        $(this).find('td').each(function() {
+            var id = $(this).attr('id');
+            $(this).text(new_set['formstate'][id]);
 
-                // add a % sign to the rate cell
-                if (id == 'r') {
-                    $(this).text(new_set['formstate'][id] + "%");
-                }
-            });
-//        }
+            // add a % sign to the rate cell
+            if (id == 'r') {
+                $(this).text(new_set['formstate'][id] + "%");
+            }
+        });
     });
 
     // update index
@@ -229,37 +231,4 @@ function submitUpdate(name, add) {
             return chart1;
         });
     });
-
-    /* linePlusBarChart */
-    /*
-    d3.json(URL,function(error,data) {
-        nv.addGraph(function() {
-            var chart = nv.models.linePlusBarChart()
-                .margin({top: 30, right: 200, bottom: 50, left: 200})
-                //We can set x data accessor to use index. Reason? So the bars all appear evenly spaced.
-                .x(function(d) { return d[0] })
-                .y(function(d) {return d[1] });
-
-            chart.xAxis.axisLabel(term);
-
-            chart.y1Axis
-                .tickFormat(d3.format(',f'));
-
-            chart.y2Axis.axisLabel("two");
-
-            d3.select('#chart2 svg')
-                .datum(data)
-                .transition()
-                .duration(0)
-                .call(chart);
-
-            nv.utils.windowResize(chart.update);
-
-            return chart;
-        });
-    });
-    */
 }
-
-// initial display of the chart
-//submitUpdate();
