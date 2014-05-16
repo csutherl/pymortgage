@@ -59,7 +59,18 @@ function addToChart(add) {
 }
 
 function getFormState() {
-    var json = { 'formstate': {'P': getPrin(), 'r': getRate(), 'n': getTerm(), 'i': getIns(), 't': getTax(), 'af': getAdjFreq(), 'ac': getAdjCap(), 'lc': getLifetimeCap(), 'termbtn': $('#termbtn').html()}};
+    var json = { 'formstate': {'P': getPrin(),
+        'r': getRate(),
+        'n': getTerm(),
+        'i': getIns(),
+        't': getTax(),
+        'af': getAdjFreq(),
+        'ac': getAdjCap(),
+        'lc': getLifetimeCap(),
+        'fixed_type': $('#fixed_type').is(':checked'),
+        'arm_type': $('#arm_type').is(':checked'),
+        'termbtn': $('#termbtn').html()
+    }};
     console.debug("Form state: " + JSON.stringify(json));
 
     return json;
@@ -73,10 +84,16 @@ function selectRow(rowNum) {
     var temp = indexedSet[selectedRow]['formstate'];
     for (var key in temp) {
         // Added this check to fix issue #6. Now the form updates completely.
-        if (key == 'termbtn') {
-            $('#' + key).html(temp[key]);
-        } else {
-           setInput(key, temp[key]);
+        switch (key) {
+            case 'termbtn':
+                $('#' + key).html(temp[key]);
+                break;
+            case 'fixed_type':
+            case 'arm_type':
+                $('#' + key).prop('checked', temp[key]);
+                break;
+            default:
+                setInput(key, temp[key]);
         }
     }
 }
