@@ -32,17 +32,16 @@ function buildURL() {
 }
 
 function addToChart(add) {
-    var name = prompt("Please name this mortgage: ", "Mortgage 1");
+//    var name = prompt("Please name this mortgage: ", "Mortgage 1");
+    var name = getInput('name');
     add = typeof add !== 'undefined' ? add : true;
 
     if (name != 'null' && !checkName(name)) {
-        var name_without_spaces = name.replace(/\s+/g, ';;;');
-
         // show table after adding first row
         $('#myTable').show();
 
         <!-- my clickable rows :) Need to implement some select action on click that way you can remove/update the chart's data -->
-        $('#myTable tr:last').after('<tr onclick=selectRow(' + indexedSet.length +'); id=' + name_without_spaces + '>' +
+        $('#myTable tr:last').after('<tr onclick=selectRow(' + indexedSet.length +'); id=row_' + indexedSet.length + '>' +
             '<td id=\'name\'>' + name + '</td>' +
             '<td id=\'P\'>' + getPrin() + '</td>' +
             '<td id=\'r\'>' + getRate() +
@@ -55,11 +54,15 @@ function addToChart(add) {
         indexedSet.push(mort);
 
         submitUpdate(name, add);
+    } else {
+        alert('Please add a unique or non-null name.');
     }
 }
 
 function getFormState() {
-    var json = { 'formstate': {'P': getPrin(),
+    var json = { 'formstate': {
+        'name': getInput('name'),
+        'P': getPrin(),
         'r': getRate(),
         'n': getTerm(),
         'i': getIns(),
@@ -103,15 +106,15 @@ function updateCurrentRow() {
     // grab the indexed data and set the form according to the row selected
     var temp = indexedSet[selectedRow];
     console.debug("Old row: " + JSON.stringify(temp));
-    var name = temp['name'];
     var new_set = getFormState();
-    new_set['name'] = name;
+    // set name on the top level of the array
+    new_set['name'] = new_set['formstate']['name'];
     new_set['data'] = temp['data']; // transpose data to new set
     console.debug("New row: " + JSON.stringify(new_set));
 
     // update table
-    $('#myTable tr').each(function() {
-        if ($(this).attr('id') == name.replace(/\s+/g, ';;;')) {
+    $('#row_' + selectedRow).each(function() {
+//        if ($(this).attr('id') == name.replace(/\s+/g, ';;;')) {
             $(this).find('td').each(function() {
                 var id = $(this).attr('id');
                 $(this).text(new_set['formstate'][id]);
@@ -121,7 +124,7 @@ function updateCurrentRow() {
                     $(this).text(new_set['formstate'][id] + "%");
                 }
             });
-        }
+//        }
     });
 
     // update index
