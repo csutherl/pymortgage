@@ -33,11 +33,6 @@ if __name__ == "__main__":
             'tools.staticdir.on': True,
             'tools.staticdir.dir': STATIC_DIR,
         }
-        # ,
-        # '/js': {
-        #     'tools.staticdir.on': True,
-        #     'tools.staticdir.dir': '%s/js' % STATIC_DIR,
-        # }
     }
 
     cherrypy.tree.mount(GetChart(), '/', config=static_conf)
