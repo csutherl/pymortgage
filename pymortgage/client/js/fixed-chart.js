@@ -62,6 +62,8 @@ function addToChart(add) {
     }
 }
 
+// TODO: Can probably create a loop that goes through the form and grabs each input id instead of indivduals.
+// Doing that would make the form state capture more automated.
 function getFormState() {
     var json = { 'formstate': {
         'name': getInput('name'),
