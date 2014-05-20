@@ -89,7 +89,8 @@ function visualizeIt(){
         if (error) return console.warn(error);
         twentyyr_data = data;
 
-        var twentyyr_extra_URL = base_URL.concat(range, "?r=.0425&P=245000&n=360&t=1836&i=1056&af=2&ac=.01&lc=.06");
+//        var twentyyr_extra_URL = base_URL.concat(range, "?r=.0425&P=245000&n=360&t=1836&i=1056&af=2&ac=.01&lc=.06");
+        var twentyyr_extra_URL =  base_URL.concat(range, "?r=.045&P=245000&n=360&t=1836&i=1056&af=5&ac=.02&lc=.06&e=250");
         d3.json(twentyyr_extra_URL, function(error, extra_data) {
             if (error) return console.warn(error);
             twentyyr_extra_data = extra_data;

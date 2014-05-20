@@ -13,7 +13,7 @@ def CORS():
 class GetChart(object):
     @cherrypy.expose
     def index(self):
-        return open(os.path.join(STATIC_DIR, 'fixed-chart.html'))
+        return open(os.path.join(STATIC_DIR, 'index.html'))
 
 if __name__ == "__main__":
     from REST_Api import REST_Server
@@ -32,14 +32,11 @@ if __name__ == "__main__":
         '/': {
             'tools.staticdir.on': True,
             'tools.staticdir.dir': STATIC_DIR,
-        },
-        '/js': {
-            'tools.staticdir.on': True,
-            'tools.staticdir.dir': '%s/js' % STATIC_DIR,
         }
     }
 
     cherrypy.tree.mount(GetChart(), '/', config=static_conf)
 
+    cherrypy.server.bind_addr = ('0.0.0.0', 4001)
     cherrypy.engine.start()
     cherrypy.engine.block()

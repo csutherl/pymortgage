@@ -1,6 +1,6 @@
 __author__ = 'coty'
 
-from pymortgage.server.amortization import Amortization_Schedule
+from pymortgage.server.amortization_schedule import Amortization_Schedule
 import traceback
 
 
