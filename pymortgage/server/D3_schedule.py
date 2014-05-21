@@ -1,4 +1,4 @@
-class D3_Schedule:
+class D3Schedule:
 
     def __init__(self, am_schedule, range=False):
         if range:
@@ -12,7 +12,7 @@ class D3_Schedule:
     def get_d3_schedule(self, schedule, by_year=None):
             d3_data = []
 
-            keys = ['balance', 'principal', 'interest', 'amount', 'insurance', 'taxes', 'extra_payment']
+            keys = ['balance', 'principal', 'interest', 'amount', 'insurance', 'taxes', 'extra payment']
 
             if by_year:
                 term = 'year'

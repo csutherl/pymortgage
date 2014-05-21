@@ -3,7 +3,7 @@ __author__ = 'coty'
 from Api_helper import parse_params
 
 
-class REST_Server:
+class RESTServer:
     exposed = True
 
     # if you were to request /foo/bar?woo=hoo, vpath[0] would be bar, and params would be {'woo': 'hoo'}.

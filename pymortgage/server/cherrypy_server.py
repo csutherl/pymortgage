@@ -16,8 +16,8 @@ class GetChart(object):
         return open(os.path.join(STATIC_DIR, 'index.html'))
 
 if __name__ == "__main__":
-    from REST_Api import REST_Server
-    from D3_Api import D3_Server
+    from REST_Api import RESTServer
+    from D3_Api import D3Server
 
     cherrypy.tools.CORS = cherrypy.Tool('before_finalize', CORS)
 
@@ -25,8 +25,8 @@ if __name__ == "__main__":
         '/': {'request.dispatch': cherrypy.dispatch.MethodDispatcher(), 'tools.CORS.on': True}
     }
 
-    cherrypy.tree.mount(REST_Server(), '/api/amort', config=api_conf)
-    cherrypy.tree.mount(D3_Server(), '/api/d3/amort', config=api_conf)
+    cherrypy.tree.mount(RESTServer(), '/api/amort', config=api_conf)
+    cherrypy.tree.mount(D3Server(), '/api/d3/amort', config=api_conf)
 
     static_conf = {
         '/': {

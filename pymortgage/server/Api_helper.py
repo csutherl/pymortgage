@@ -1,6 +1,6 @@
 __author__ = 'coty'
 
-from pymortgage.server.amortization_schedule import Amortization_Schedule
+from pymortgage.server.amortization_schedule import AmortizationSchedule
 import traceback
 
 
@@ -72,6 +72,6 @@ def parse_params(params):
         return None
 
     if adjustable:
-        return Amortization_Schedule(rate, prin, term, tax, ins, adj_freq, adj_cap, life_cap, extra_pmt)
+        return AmortizationSchedule(rate, prin, term, tax, ins, adj_freq, adj_cap, life_cap, extra_pmt)
     else:
-        return Amortization_Schedule(rate, prin, term, tax, ins, extra_pmt=extra_pmt)
+        return AmortizationSchedule(rate, prin, term, tax, ins, extra_pmt=extra_pmt)

@@ -1,11 +1,11 @@
 __author__ = 'coty'
 
 from Api_helper import parse_params
-from pymortgage.server.D3_schedule import D3_Schedule
+from pymortgage.server.D3_schedule import D3Schedule
 import json
 
 
-class D3_Server:
+class D3Server:
     exposed = True
 
     # if you were to request /foo/bar?woo=hoo, vpath[0] would be bar, and params would be {'woo': 'hoo'}.
@@ -29,9 +29,9 @@ class D3_Server:
                     if start > end:
                         raise Exception("Range start is greater than range end.")
 
-                    d3_sched = D3_Schedule(am_sched.get_range('year', start, end), range=True)
+                    d3_sched = D3Schedule(am_sched.get_range('year', start, end), range=True)
                 else:
-                    d3_sched = D3_Schedule(am_sched)
+                    d3_sched = D3Schedule(am_sched)
 
                 return json.dumps(d3_sched.yearly_d3_schedule)
             elif len(vpath) >= 2:
@@ -44,8 +44,8 @@ class D3_Server:
                 if start > end:
                     raise Exception("Range start is greater than range end.")
 
-                d3_sched = D3_Schedule(am_sched.get_range('month', start, end), range=True)
+                d3_sched = D3Schedule(am_sched.get_range('month', start, end), range=True)
                 return json.dumps(d3_sched.monthly_d3_schedule)
 
-        d3_sched = D3_Schedule(am_sched)
+        d3_sched = D3Schedule(am_sched)
         return json.dumps(d3_sched.monthly_d3_schedule)

@@ -1,7 +1,7 @@
 from pymortgage.server.amortization_calculator import calc_amortization
 
 
-class Amortization_Schedule:
+class AmortizationSchedule:
 
     # assuming adj_frequency is always expressed in years, and adj_cap and lifetime_cap are expressed as decimals
     def __init__(self, rate, P, n, annual_tax, annual_ins, adj_frequency=None, adj_cap=None, lifetime_cap=None,
@@ -22,7 +22,7 @@ class Amortization_Schedule:
         self.lifetime_cap = lifetime_cap
 
         # correct lifetime_cap by adding it to initial rate
-        # added .000001 b/c the 5 year ARM wasnt adjusting the last time.
+        # added .000001 b/c the 5 year ARM wasn't adjusting the last time.
         if self.lifetime_cap is not None:
             self.lifetime_cap += self.rate + .000001
 
@@ -64,7 +64,7 @@ class Amortization_Schedule:
             new_prin = curr_month['balance']
             curr_month['taxes'] = self.monthly_tax
             curr_month['insurance'] = self.monthly_insurance
-            curr_month['extra_payment'] = self.extra_pmt
+            curr_month['extra payment'] = self.extra_pmt
 
             # add taxes and insurance to the amount and extra payment
             curr_month['amount'] += self.monthly_tax + self.monthly_insurance + self.extra_pmt
@@ -101,7 +101,7 @@ class Amortization_Schedule:
             group_schedule['principal'] = 0
             group_schedule['amount'] = 0
             group_schedule['balance'] = year_end_balance[key]
-            group_schedule['extra_payment'] = 0
+            group_schedule['extra payment'] = 0
 
             # insert taxes and insurance
             group_schedule['insurance'] = self.annual_ins
@@ -111,7 +111,7 @@ class Amortization_Schedule:
                 group_schedule['interest'] += year['interest']
                 group_schedule['principal'] += year['principal']
                 group_schedule['amount'] += year['amount']
-                group_schedule['extra_payment'] += year['extra_payment']
+                group_schedule['extra payment'] += year['extra payment']
 
             yearly_schedule.append(group_schedule)
 
@@ -141,7 +141,7 @@ class Amortization_Schedule:
 
 if __name__ == "__main__":
     # am_sched = Amortization_Schedule(.0425, 245000, 360, 1836, 1056)
-    am_sched = Amortization_Schedule(.0425, 245000, 360, 1836, 1056, 2, .01, .06)
+    am_sched = AmortizationSchedule(.0425, 245000, 360, 1836, 1056, 2, .01, .06)
 
     import pprint
     pp = pprint.PrettyPrinter(indent=4)
