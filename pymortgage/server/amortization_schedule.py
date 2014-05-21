@@ -78,10 +78,15 @@ class AmortizationSchedule:
         return temp_schedule
 
     def create_yearly_schedule(self):
+        # multiply the original term by 12 so that we can create years
+        temp_n = self.n * 12
+        self.n = temp_n
+        monthly_schedule = self.create_monthly_schedule()
+
         temp_schedule = []
         year_end_balance = dict()
 
-        for month in self.monthly_schedule:
+        for month in monthly_schedule:
             year = (month['month'] / 12) + 1
 
             if month['month'] % 12 == 0:
@@ -116,36 +121,3 @@ class AmortizationSchedule:
             yearly_schedule.append(group_schedule)
 
         return yearly_schedule
-
-    def get_range(self, term, start, end):
-        subset = []
-        schedule = None
-
-        if term == 'month':
-            schedule = self.monthly_schedule
-        elif term == 'year':
-            schedule = self.yearly_schedule
-        else:
-            raise Exception("Invalid term selected.")
-
-        if start > 0:
-            counter = start - 1  # subtract one to make it zero based again
-        else:
-            counter = start
-
-        while counter < end:
-            subset.append(schedule[counter])
-            counter += 1
-
-        return subset
-
-if __name__ == "__main__":
-    # am_sched = Amortization_Schedule(.0425, 245000, 360, 1836, 1056)
-    am_sched = AmortizationSchedule(.0425, 245000, 360, 1836, 1056, 2, .01, .06)
-
-    import pprint
-    pp = pprint.PrettyPrinter(indent=4)
-    # pp.pprint(am_sched.monthly_schedule)
-
-    pp.pprint(am_sched.get_range('month', 2, 5))
-    # pp.pprint(am_sched.get_range('year', 2, 5))
