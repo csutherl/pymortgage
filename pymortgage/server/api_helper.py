@@ -1,7 +1,6 @@
 __author__ = 'coty'
 
 from pymortgage.server.amortization_schedule import AmortizationSchedule
-import traceback
 
 
 def parse_params(params):
@@ -17,8 +16,6 @@ def parse_params(params):
         'lc' = lifetime cap (percent in decimal form)
         'e' = extra payment amount
     '''
-    adjustable = False
-
     # check keys and conversions
     p = params  # shorting the var name :)
 
@@ -27,14 +24,10 @@ def parse_params(params):
         rate = float(p['r'])
         prin = int(p['P'])
         term = int(p['n'])
-        tax = int(p['t'])
-        ins = int(p['i'])
     except KeyError as ke:
-        print "A required parameter is missing: %s" % ke.message
-        return None
+        raise KeyError("A required parameter is missing: %s" % ke.message)
     except ValueError as ve:
-        print "A required parameter has an invalid value: %s" % ve.message
-        return None
+        raise ValueError("A required parameter has an invalid value: %s" % ve.message)
 
     # only required for adjustable
     try:
@@ -46,30 +39,33 @@ def parse_params(params):
     except KeyError:
         adjustable = False
     except ValueError as ve:
-        print "A parameter has an invalid value: %s" % ve.message
-        return None
+        raise ValueError("A parameter has an invalid value: %s" % ve.message)
 
     # always optional values
     try:
-        extra_pmt = int(p['e'])
-    except KeyError:
-        extra_pmt = 0
+        try:
+            tax = int(p['t'])
+        except KeyError:
+            tax = 0
+        try:
+            ins = int(p['i'])
+        except KeyError:
+            ins = 0
+        try:
+            extra_pmt = int(p['e'])
+        except KeyError:
+            extra_pmt = 0
     except ValueError as ve:
-        print "A parameter has an invalid value: %s" % ve.message
-        return None
+        raise ValueError("A parameter has an invalid value: %s" % ve.message)
 
     # check values
-    try:
-        if 1 < rate < 0:
-            raise Exception("Rate is not expressed as decimal.")
-        if adjustable:
-            if 1 < adj_cap < 0:
-                raise Exception("Adjustment cap is not expressed as decimal.")
-            elif 1 < life_cap < 0:
-                raise Exception("Lifetime cap is not expressed as decimal.")
-    except Exception as e:
-        print e.message
-        return None
+    if rate < 0 or rate > 1:
+        raise Exception("Rate is not expressed as decimal.")
+    if adjustable:
+        if adj_cap < 0 or adj_cap > 1:
+            raise Exception("Adjustment cap is not expressed as decimal.")
+        elif life_cap < 0 or life_cap > 1:
+            raise Exception("Lifetime cap is not expressed as decimal.")
 
     if adjustable:
         return AmortizationSchedule(rate, prin, term, tax, ins, adj_freq, adj_cap, life_cap, extra_pmt)

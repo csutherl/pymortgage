@@ -4,7 +4,7 @@ from pymortgage.server.amortization_calculator import calc_amortization
 class AmortizationSchedule:
 
     # assuming adj_frequency is always expressed in years, and adj_cap and lifetime_cap are expressed as decimals
-    def __init__(self, rate, P, n, annual_tax, annual_ins, adj_frequency=None, adj_cap=None, lifetime_cap=None,
+    def __init__(self, rate, P, n, annual_tax=0, annual_ins=0, adj_frequency=None, adj_cap=None, lifetime_cap=None,
                  extra_pmt=None):
         self.rate = rate
         self.P = P
