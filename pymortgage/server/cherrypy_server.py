@@ -17,7 +17,7 @@ class GetChart(object):
 
 if __name__ == "__main__":
     from REST_Api import RESTServer
-    from D3_Api import D3Server
+    from d3_api import D3Server
 
     cherrypy.tools.CORS = cherrypy.Tool('before_finalize', CORS)
 
