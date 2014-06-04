@@ -15,28 +15,27 @@ class GetChart(object):
     def index(self):
         return open(os.path.join(STATIC_DIR, 'index.html'))
 
-if __name__ == "__main__":
-    from REST_Api import RESTServer
-    from d3_api import D3Server
+from REST_Api import RESTServer
+from d3_api import D3Server
 
-    cherrypy.tools.CORS = cherrypy.Tool('before_finalize', CORS)
+cherrypy.tools.CORS = cherrypy.Tool('before_finalize', CORS)
 
-    api_conf = {
-        '/': {'request.dispatch': cherrypy.dispatch.MethodDispatcher(), 'tools.CORS.on': True}
+api_conf = {
+    '/': {'request.dispatch': cherrypy.dispatch.MethodDispatcher(), 'tools.CORS.on': True}
+}
+
+cherrypy.tree.mount(RESTServer(), '/api/amort', config=api_conf)
+cherrypy.tree.mount(D3Server(), '/api/d3/amort', config=api_conf)
+
+static_conf = {
+    '/': {
+        'tools.staticdir.on': True,
+        'tools.staticdir.dir': STATIC_DIR,
     }
+}
 
-    cherrypy.tree.mount(RESTServer(), '/api/amort', config=api_conf)
-    cherrypy.tree.mount(D3Server(), '/api/d3/amort', config=api_conf)
+cherrypy.tree.mount(GetChart(), '/', config=static_conf)
 
-    static_conf = {
-        '/': {
-            'tools.staticdir.on': True,
-            'tools.staticdir.dir': STATIC_DIR,
-        }
-    }
-
-    cherrypy.tree.mount(GetChart(), '/', config=static_conf)
-
-    cherrypy.server.bind_addr = ('0.0.0.0', 4001)
-    cherrypy.engine.start()
-    cherrypy.engine.block()
+cherrypy.server.bind_addr = ('0.0.0.0', 4001)
+cherrypy.engine.start()
+cherrypy.engine.block()
