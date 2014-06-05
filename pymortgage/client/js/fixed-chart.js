@@ -4,7 +4,8 @@ var selectedRow = 'null';
 function buildURL() {
 //    var base_URL =  "http://10.13.153.78:4001/api/d3/amort";
 //    var base_URL =  "http://10.10.55.54:4001/api/d3/amort";
-    var base_URL =  "http://localhost:4001/api/d3/amort";
+//    var base_URL =  "http://localhost:4001/api/d3/amort";
+    var base_URL =  "http://pymortgage-csutherl.rhcloud.com:8080/api/d3/amort";
 
     var term = $('#termbtn').text();
     if (term.indexOf("Year") != -1)

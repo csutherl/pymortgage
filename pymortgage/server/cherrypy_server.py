@@ -15,8 +15,8 @@ class GetChart(object):
     def index(self):
         return open(os.path.join(STATIC_DIR, 'index.html'))
 
-from REST_Api import RESTServer
-from d3_api import D3Server
+from pymortgage.server.REST_Api import RESTServer
+from pymortgage.server.d3_api import D3Server
 
 cherrypy.tools.CORS = cherrypy.Tool('before_finalize', CORS)
 
@@ -36,6 +36,8 @@ static_conf = {
 
 cherrypy.tree.mount(GetChart(), '/', config=static_conf)
 
-cherrypy.server.bind_addr = ('0.0.0.0', 4001)
-cherrypy.engine.start()
-cherrypy.engine.block()
+if __name__ == '__main__':
+    # assume we're testing locally
+    cherrypy.server.bind_addr = ('0.0.0.0', 4001)
+    cherrypy.engine.start()
+    cherrypy.engine.block()

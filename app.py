@@ -14,23 +14,9 @@ import os
 if __name__ == '__main__':
    ip   = os.environ['OPENSHIFT_PYTHON_IP']
    port = int(os.environ['OPENSHIFT_PYTHON_PORT'])
-   app = imp.load_source('application', 'wsgi/application')
+   app = imp.load_source('cherrypy_server', 'pymortgage/server/cherrypy_server.py')
 
-   fwtype="wsgiref"
-   for fw in ("cherrypy"):
-      try:
-         imp.find_module(fw)
-         fwtype = fw
-      except ImportError:
-         pass
-
-   print('Starting WSGIServer type %s on %s:%d ... ' % (fwtype, ip, port))
-   if fwtype == "cherrypy":
-      from cherrypy import wsgiserver
-      server = wsgiserver.CherryPyWSGIServer(
-         (ip, port), app.application, server_name=os.environ['OPENSHIFT_APP_DNS'])
-      server.start()
-
-   else:
-      from wsgiref.simple_server import make_server
-      make_server(ip, port, app.application).serve_forever()
+   print('Starting CherryPy on %s:%d ... ' % (ip, port))
+   app.cherrypy.server.bind_addr = (ip, port)
+   app.cherrypy.engine.start()
+   app.cherrypy.engine.block()
