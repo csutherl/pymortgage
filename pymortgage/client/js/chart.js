@@ -2,10 +2,7 @@ var indexedSet = [];
 var selectedRow = 'null';
 
 function buildURL() {
-//    var base_URL =  "http://10.13.153.78:4001/api/d3/amort";
-//    var base_URL =  "http://10.10.55.54:4001/api/d3/amort";
-//    var base_URL =  "http://localhost:4001/api/d3/amort";
-    var base_URL =  "http://pymortgage-csutherl.rhcloud.com/api/d3/amort";
+    var base_URL =  "/api/d3/amort";
 
     var term = $('#termbtn').text();
     if (term.indexOf("Year") != -1)
@@ -36,7 +33,6 @@ function buildURL() {
 }
 
 function addToChart(add) {
-//    var name = prompt("Please name this mortgage: ", "Mortgage 1");
     var name = getInput('name');
     add = typeof add !== 'undefined' ? add : true;
 
