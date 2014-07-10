@@ -44,32 +44,59 @@ class AmortizationSchedule:
         count_n = self.n
         start_n = count_n
 
+        # set payment to 0 so that we can capture the first payment or adjustments with ARMs
+        constant_amt = 0
+        # add a boolean to allow adjustments after the rate adjustment
+        last_adj = False
         while count_n > 0:
             current_month = (start_n - count_n)
-
-            if self.adj_frequency is not None \
-                and current_month > 0 \
-                and current_month % (self.adj_frequency * 12) == 0 \
-                and (self.rate + self.adj_cap) <= self.lifetime_cap:
-                self.rate += self.adj_cap  # assumes worst case scenario
 
             curr_month = calc_amortization(self.rate, new_prin, count_n)
             curr_month['month'] = current_month + 1  # to make it one based
             curr_month['balance'] = round(new_prin - curr_month['principal'] - self.extra_pmt, 2)
+
+            if self.adj_frequency is not None and current_month > 0:
+                if current_month % (self.adj_frequency * 12) == 0 and (self.rate + self.adj_cap) <= self.lifetime_cap:
+                    self.rate += self.adj_cap  # assumes worst case scenario
+                elif current_month % (self.adj_frequency * 12) == 1 and not last_adj:
+                    # mod 1 because we need to update the constant_amt after the rate change
+                    constant_amt = curr_month['amount']
+                    if (self.rate + self.adj_cap) > self.lifetime_cap:
+                        last_adj = True
+
+            # set payment amount to first amount
+            if constant_amt == 0:
+                constant_amt = curr_month['amount']
+            elif constant_amt != curr_month['amount']:
+                # set delta amount from payments
+                delta = constant_amt - curr_month['amount']
+                curr_month['amount'] = constant_amt
+                # if delta is positive then update the balance and principal amount
+                if delta > 0:
+                    curr_month['balance'] -= delta
+                    curr_month['principal'] += delta
 
             # balance cant be < 0...it makes other things less...
             if curr_month['balance'] < 0:
                 curr_month['balance'] = 0
 
             new_prin = curr_month['balance']
+            curr_month['extra payment'] = self.extra_pmt
             curr_month['taxes'] = self.monthly_tax
             curr_month['insurance'] = self.monthly_insurance
-            curr_month['extra payment'] = self.extra_pmt
 
             # add taxes and insurance to the amount and extra payment
             curr_month['amount'] += self.monthly_tax + self.monthly_insurance + self.extra_pmt
             # add extra payment amount to principal for the month
             curr_month['principal'] += self.extra_pmt
+
+            # if balance is 0, then 0 out all other payment
+            if curr_month['balance'] == 0:
+                curr_month['taxes'] = 0
+                curr_month['insurance'] = 0
+                curr_month['extra payment'] = 0
+                curr_month['amount'] = 0
+                curr_month['principal'] = 0
 
             count_n -= 1
 
