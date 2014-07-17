@@ -22,7 +22,7 @@ def parse_params(params):
     # always required
     try:
         rate = float(p['r'])
-        prin = int(p['P'])
+        prin = float(p['P'])
         term = int(p['n'])
     except KeyError as ke:
         raise KeyError("A required parameter is missing: %s" % ke.message)
@@ -44,15 +44,15 @@ def parse_params(params):
     # always optional values
     try:
         try:
-            tax = int(p['t'])
+            tax = float(p['t'])
         except KeyError:
             tax = 0
         try:
-            ins = int(p['i'])
+            ins = float(p['i'])
         except KeyError:
             ins = 0
         try:
-            extra_pmt = int(p['e'])
+            extra_pmt = float(p['e'])
         except KeyError:
             extra_pmt = 0
     except ValueError as ve:
