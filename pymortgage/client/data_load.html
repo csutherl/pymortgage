@@ -1,0 +1,43 @@
+<html>
+  <head>
+    <link href="css/c3.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div id="chart"></div>
+
+    <!--Apparently the version of d3.v3.js I have downloaded doesn't work with c3 :/ -->
+    <!--<script src="js/d3.v3.js" charset="utf-8"></script>-->
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="js/c3.js"></script>
+    <script>
+      var chart = c3.generate({
+        data: {
+          url: '/api/c3/amort?r=0.045&P=240000&n=360&t=1000&i=1000&e=0',
+          mimeType: 'json'
+        },
+        axis: {
+            x: {
+                type: 'category',
+                tick: {
+                    culling: {
+                        max: 12
+                    }
+                }
+            }
+        },
+        point: {
+            show: false
+        },
+        subchart: {
+          show: true
+        },
+        zoom: {
+          enabled: true
+        },
+        transition: {
+          duration: 500
+        }
+      });
+    </script>
+  </body>
+</html>

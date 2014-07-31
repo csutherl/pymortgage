@@ -17,6 +17,7 @@ class GetChart(object):
 
 from pymortgage.server.REST_Api import RESTServer
 from pymortgage.server.d3_api import D3Server
+from pymortgage.server.c3_api import C3Server
 
 cherrypy.tools.CORS = cherrypy.Tool('before_finalize', CORS)
 
@@ -26,6 +27,7 @@ api_conf = {
 
 cherrypy.tree.mount(RESTServer(), '/api/amort', config=api_conf)
 cherrypy.tree.mount(D3Server(), '/api/d3/amort', config=api_conf)
+cherrypy.tree.mount(C3Server(), '/api/c3/amort', config=api_conf)
 
 static_conf = {
     '/': {
