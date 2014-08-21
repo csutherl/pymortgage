@@ -81,3 +81,15 @@ function setAdjCap(value) {
 function setLifetimeCap(value) {
     setInput('lc', value);
 }
+
+// radio button clicks
+function hideArmInputs() {
+    $('#af-group').hide();
+    $('#ac-group').hide();
+    $('#lc-group').hide();
+}
+function showArmInputs() {
+    $('#af-group').show();
+    $('#ac-group').show();
+    $('#lc-group').show();
+}
