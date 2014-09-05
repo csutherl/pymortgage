@@ -60,8 +60,11 @@ function addToChart(add) {
         // $("#chart1").prepend("<div class=\"chart-title\">Chart title here :)</div>");
         submitUpdate(name, add);
 
-        // add collapsible group for amortization table
+        // add collapsible group for amortization table tab
         addTableCollapse('row_' + rowCounter + '_table', name);
+
+        // add collapsible group for amortization summary tab
+        addSummaryCollapse('row_' + rowCounter + '_summary', name);
 
         // increment row counter to keep IDs unique
         rowCounter++;
@@ -86,6 +89,9 @@ function removeFromChart() {
 
         // remove the collapsible group from table tab
         $('#' + selectedRowID + '_table').parent().remove();
+
+        // remove the collapsible group from summary tab
+        $('#' + selectedRowID + '_summary').parent().remove();
 
         // remove data from chart
         submitUpdate('', -1);
@@ -230,13 +236,17 @@ function getDataSet() {
 }
 
 function updateTableTab() {
-    // remove the thead and tbody
-//    $('#' + selectedRowID + '_table-summary tbody').remove();
-//    $('#' + selectedRowID + '_table-summary thead').remove();
+    // clear the table
     $('#' + selectedRowID + '_table-summary').empty();
-
     // repopulate the table by calling the api
     populateTableCollapse(selectedRowID + '_table');
+}
+
+function updateSummaryTab() {
+    // clear the table
+    $('#' + selectedRowID + '_summary-summary').empty();
+    // repopulate the table by calling the api
+    populateSummaryCollapse(selectedRowID + '_summary');
 }
 
 function submitUpdate(name, change) {
@@ -297,15 +307,13 @@ function submitUpdate(name, change) {
                 });
 
                 updateTableTab();
+                updateSummaryTab();
                 break;
         }
 
         nv.addGraph(function () {
             // this adds the stupid block that is causing the other tabs to display funny
             $('#chart-pane').show(); // show chart pane before rendering
-
-            // should we switch to the chart pane when you add to the chart each time?
-//            $('#myTabs a[href="#chart-pane"]').tab('show'); // show chart pane before rendering
 
             var chart1 = nv.models.lineChart()
                 .useInteractiveGuideline(true)
@@ -344,6 +352,11 @@ function addTableCollapse(id, name) {
     populateTableCollapse(id);
 }
 
+function addSummaryCollapse(id, name) {
+    addCollapse('summary-pane-accordion', id, name);
+    populateSummaryCollapse(id);
+}
+
 function addCollapse(accord, id, name) {
     $('#' + accord).append("<div class=\"panel panel-default\"> \
         <div class=\"panel-heading\"> \
@@ -376,7 +389,7 @@ function populateTableCollapse(id) {
             '<td>Interest</td>' +
             '<td>Extra Payment</td>' +
             '</thead></tr>');
-        $.each(data, function (key, val) {
+        $.each(data['table'], function (key, val) {
             var row = '<tbody><tr>' +
                 '<td>' + val[term.toLowerCase()] + '</td>' +
                 '<td>' + val['balance'].formatCurrency() + '</td>' +
@@ -390,7 +403,33 @@ function populateTableCollapse(id) {
     });
 }
 
-Number.prototype.formatCurrency = function(n, x) {
+function populateSummaryCollapse(id) {
+    var url_term = buildURL();
+    var url = url_term[0].replace('d3/', '');
+
+    $.getJSON(url, function (data) {
+        var summary_selector = $('#' + id + '-summary').append('<thead><tr>' +
+            '<td>90% LTV</td>' +
+            '<td>80% LTV</td>' +
+            '<td>Total Amount Paid</td>' +
+            '<td>Total Extra Payment Paid</td>' +
+            '<td>Total Principal Paid</td>' +
+            '<td>Total Interest Paid</td>' +
+            '</thead></tr>');
+        var val = data['summary'];
+        var row = '<tbody><tr>' +
+            '<td>' + val['90% ltv'].formatCurrency() + '</td>' +
+            '<td>' + val['80% ltv'].formatCurrency() + '</td>' +
+            '<td>' + val['total amount'].formatCurrency() + '</td>' +
+            '<td>' + val['total extra payment'].formatCurrency() + '</td>' +
+            '<td>' + val['total principal'].formatCurrency() + '</td>' +
+            '<td>' + val['total interest'].formatCurrency() + '</td>' +
+            '</tr></tbody>'
+        summary_selector.append(row);
+    });
+}
+
+Number.prototype.formatCurrency = function (n, x) {
     if (n == undefined) n = 2;
     var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\.' : '$') + ')';
     return '$' + this.toFixed(Math.max(0, ~~n)).replace(new RegExp(re, 'g'), '$&,');

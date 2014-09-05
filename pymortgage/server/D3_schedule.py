@@ -1,8 +1,8 @@
 class D3Schedule:
 
     def __init__(self, am_schedule):
-        self.monthly_d3_schedule = self.get_d3_schedule(am_schedule.monthly_schedule)
-        self.yearly_d3_schedule = self.get_d3_schedule(am_schedule.yearly_schedule, True)
+        self.monthly_d3_schedule = self.get_d3_schedule(am_schedule.monthly_schedule['table'])
+        self.yearly_d3_schedule = self.get_d3_schedule(am_schedule.yearly_schedule['table'], True)
 
     def get_d3_schedule(self, schedule, by_year=None):
             d3_data = []
