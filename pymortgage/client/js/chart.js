@@ -372,7 +372,7 @@ function addCollapse(accord, id, name) {
             </div> \
         </div> \
     </div>");
-    $('#' + id).collapse('toggle'); // collapse by default
+//    $('#' + id).collapse('toggle'); // collapse by default
 }
 
 function populateTableCollapse(id) {
