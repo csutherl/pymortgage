@@ -32,9 +32,12 @@ class AmortizationSchedule:
         else:
             self.extra_pmt = extra_pmt
 
+        self.monthly_schedule = dict()
+        self.yearly_schedule = dict()
+
         # create schedules in instance
-        self.monthly_schedule = self.create_monthly_schedule()
-        self.yearly_schedule = self.create_yearly_schedule()
+        self.create_monthly_schedule()
+        self.create_yearly_schedule()
 
     def create_monthly_schedule(self):
         temp_schedule = []
@@ -100,18 +103,21 @@ class AmortizationSchedule:
 
             temp_schedule.append(curr_month)
 
-        return temp_schedule
+        self.monthly_schedule['table'] = temp_schedule
+        self.monthly_schedule['summary'] = self.calc_stats(self.monthly_schedule)
 
     def create_yearly_schedule(self):
         # multiply the original term by 12 so that we can create years
         temp_n = self.n * 12
         self.n = temp_n
-        monthly_schedule = self.create_monthly_schedule()
+
+        if len(self.monthly_schedule) == 0:
+            self.create_monthly_schedule()
 
         temp_schedule = []
         year_end_balance = dict()
 
-        for month in monthly_schedule:
+        for month in self.monthly_schedule['table']:
             year = (month['month'] / 12) + 1
 
             if month['month'] % 12 == 0:
@@ -145,4 +151,24 @@ class AmortizationSchedule:
 
             yearly_schedule.append(group_schedule)
 
-        return yearly_schedule
+        self.yearly_schedule['table'] = yearly_schedule
+        self.yearly_schedule['summary'] = self.calc_stats(self.yearly_schedule)
+
+    def calc_stats(self, schedule):
+        summary = dict()
+
+        summary['90% ltv'] = self.P * .90
+        summary['80% ltv'] = self.P * .80
+
+        summary['total amount'] = 0
+        summary['total extra payment'] = 0
+        summary['total principal'] = 0
+        summary['total interest'] = 0
+
+        for row in schedule['table']:
+            summary['total amount'] += row['amount']
+            summary['total extra payment'] += row['extra payment']
+            summary['total principal'] += row['principal']
+            summary['total interest'] += row['interest']
+
+        return summary

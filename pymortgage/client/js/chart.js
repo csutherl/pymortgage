@@ -1,8 +1,10 @@
 var indexedSet = [];
-var selectedRow = 'null';
+var selectedRow = -1;
+var selectedRowID = 'null';
+var rowCounter = 0;
 
 function buildURL() {
-    var base_URL =  "/api/d3/amort";
+    var base_URL = "/api/d3/amort";
 
     var term = $('#termbtn').text();
     if (term.indexOf("Year") != -1)
@@ -34,16 +36,17 @@ function buildURL() {
 
 function addToChart(add) {
     var name = getInput('name');
-    add = typeof add !== 'undefined' ? add : true;
+    add = typeof add !== 'undefined' ? add : +1;
 
     if (name != 'null' && !checkName(name)) {
         // show table after adding first row
-        $('#myTable').show();
+        $('#mortgages-table').show();
 
-        <!-- my clickable rows :) Need to implement some select action on click that way you can remove/update the chart's data -->
-        $('#myTable tr:last').after('<tr onclick=selectRow(' + indexedSet.length +'); id=row_' + indexedSet.length + '>' +
+        // my clickable rows :)
+        // Need to implement some select action on click that way you can remove/update the chart's data
+        $('#mortgages-table tbody').append('<tr onclick=selectRow(this); id=row_' + rowCounter + '>' +
             '<td id=\'name\'>' + name + '</td>' +
-            '<td id=\'P\'>' + getPrin() + '</td>' +
+            '<td id=\'P\'>' + parseFloat(getPrin()).formatCurrency() + '</td>' +
             '<td id=\'r\'>' + getRate() +
             '%</td>' + '<td id=\'n\'>' + getTerm() + '</td>' +
             '</tr>');
@@ -53,13 +56,54 @@ function addToChart(add) {
         mort['name'] = name;
         indexedSet.push(mort);
 
+        // add chart title - this was duplicating it, duh...
+        // $("#chart1").prepend("<div class=\"chart-title\">Chart title here :)</div>");
         submitUpdate(name, add);
+
+        // add collapsible group for amortization table tab
+        addTableCollapse('row_' + rowCounter + '_table', name);
+
+        // add collapsible group for amortization summary tab
+        addSummaryCollapse('row_' + rowCounter + '_summary', name);
+
+        // increment row counter to keep IDs unique
+        rowCounter++;
     } else {
         alert('Please add a unique or non-null name.');
     }
 }
 
-// TODO: Can probably create a loop that goes through the form and grabs each input id instead of indivduals.
+function removeFromChart() {
+    // if there is a row selected
+    if (selectedRow >= 0) {
+        // remove the row
+        $('#' + selectedRowID).remove();
+
+        // if the table only contains the header row, hide it again
+        if ($('#mortgages-table tr').length == 1) {
+            $('#mortgages-table').hide();
+        }
+
+        // remove it from the indexedSet
+        indexedSet.splice(selectedRow, 1);
+
+        // remove the collapsible group from table tab
+        $('#' + selectedRowID + '_table').parent().remove();
+
+        // remove the collapsible group from summary tab
+        $('#' + selectedRowID + '_summary').parent().remove();
+
+        // remove data from chart
+        submitUpdate('', -1);
+
+        // deselect row since the selectedRow since it no longer exists
+        selectedRow = -1;
+    } else {
+        alert("Please select a row to remove.");
+    }
+}
+
+// TODO: Can probably create a loop that goes through the form and grabs each input id instead of individuals.
 // Doing that would make the form state capture more automated.
 function getFormState() {
     var json = { 'formstate': {
@@ -82,9 +126,25 @@ function getFormState() {
     return json;
 }
 
-function selectRow(rowNum) {
-    // set the global selected row (indexedSet index)
-    selectedRow = rowNum;
+function selectRow(tr) {
+    selectedRowID = $(tr).attr('id');
+    var mortgage_name = '';
+
+    // iterate the td elements in the row and grab the name
+    $(tr).find('td').each(function () {
+        if ($(this).attr('id') == 'name') {
+            mortgage_name = $(this).text();
+        }
+    });
+
+    for (i = 0; i < indexedSet.length; i++) {
+        if (indexedSet[i]['name'] == mortgage_name) {
+            selectedRow = i;
+        }
+    }
+
+    console.debug("Selected row: " + selectedRow);
+    console.debug("Selected row id: " + selectedRowID);
 
     // update form with selected row
     var temp = indexedSet[selectedRow]['formstate'];
@@ -96,6 +156,12 @@ function selectRow(rowNum) {
                 break;
             case 'fixed_type':
             case 'arm_type':
+                // this fires the click method when the saved value of the button is true; thereby causing the arm_type
+                // fields to hide as they do when you click the fixed button.
+//                if (temp[key]) {
+//                    $('#' + key).click();
+//                }
+                // this way sets the checked property of the radio button
                 $('#' + key).prop('checked', temp[key]);
                 break;
             default:
@@ -116,14 +182,18 @@ function updateCurrentRow() {
     console.debug("New row: " + JSON.stringify(new_set));
 
     // update table
-    $('#row_' + selectedRow).each(function() {
-        $(this).find('td').each(function() {
+    $('#row_' + selectedRow).each(function () {
+        $(this).find('td').each(function () {
             var id = $(this).attr('id');
             $(this).text(new_set['formstate'][id]);
 
-            // add a % sign to the rate cell
-            if (id == 'r') {
-                $(this).text(new_set['formstate'][id] + "%");
+            switch (id) {
+                case 'r':
+                    $(this).text(new_set['formstate'][id] + "%");
+                    break;
+                case 'P':
+                    $(this).text(parseFloat(new_set['formstate'][id]).formatCurrency());
+                    break;
             }
         });
     });
@@ -143,7 +213,7 @@ function checkName(name) {
 }
 
 function tryUpdate() {
-    if (selectedRow != 'null') {
+    if (selectedRow >= 0) {
         // only update when  row is selected
         submitUpdate();
     } else {
@@ -165,61 +235,103 @@ function getDataSet() {
     return temp;
 }
 
-function submitUpdate(name, add) {
+function updateTableTab() {
+    // clear the table
+    $('#' + selectedRowID + '_table-summary').empty();
+    // repopulate the table by calling the api
+    populateTableCollapse(selectedRowID + '_table');
+}
+
+function updateSummaryTab() {
+    // clear the table
+    $('#' + selectedRowID + '_summary-summary').empty();
+    // repopulate the table by calling the api
+    populateSummaryCollapse(selectedRowID + '_summary');
+}
+
+function submitUpdate(name, change) {
     // default for name
     name = typeof name !== 'undefined' ? name : "";
-    add = typeof add !== 'undefined' ? add : false;
+    change = typeof change !== 'undefined' ? change : 0;
 
     var val = buildURL();
     var URL = val[0];
     var term = val[1];
     console.debug("Update URL: " + URL);
 
-    d3.json(URL, function(error, json) {
+    d3.json(URL, function (error, json) {
         if (error) return console.warn(error);
 
-        if (add) {
-            var dataSet = [];
-            json.forEach(function(d) {
-                var new_key = name + " " + d['key'];
-                console.debug("Old key: " + d['key'] + " New key: " + new_key);
-                d['key'] = new_key;
-
-                dataSet.push(d);
-            });
-
-            for (var key in indexedSet) {
-                if (name == indexedSet[key]['name']) {
-                    indexedSet[key]['data'] = dataSet;
-                    console.debug("Added data to set: " + JSON.stringify(indexedSet[key]));
+        switch (change) {
+            // case remove
+            case -1:
+                // do nothing here b/c the call to getDataSet() will basically add in all the data from indexedSet
+                if (indexedSet.length == 0) {
+                    // hacky solution b/c of issue 349 open against nvd3 (old data still shows when no data presented).
+                    // just remove the svg for now...might need to add a no data message or something here.
+                    $('#chart1 svg').remove();
+                    $('#chart1').append('<svg id=\"chart-svg\" class=\"chart\"/>');
                 }
-            }
-        } else {
-            updateCurrentRow();
+                break;
+            // case add
+            case +1:
+                var dataSet = [];
+                json.forEach(function (d) {
+                    var new_key = name + " " + d['key'];
+                    console.debug("Old key: " + d['key'] + " New key: " + new_key);
+                    d['key'] = new_key;
 
-            indexedSet[selectedRow]['data'] = [];
-            json.forEach(function(d) {
-                var new_key = indexedSet[selectedRow]['name'] + " " + d['key'];
-                console.debug("Old key: " + d['key'] + " New key: " + new_key);
-                d['key'] = new_key;
+                    dataSet.push(d);
+                });
 
-                indexedSet[selectedRow]['data'].push(d);
-            });
+                for (var key in indexedSet) {
+                    if (name == indexedSet[key]['name']) {
+                        indexedSet[key]['data'] = dataSet;
+//                    console.debug("Added data to set: " + JSON.stringify(indexedSet[key]));
+                    }
+                }
+                break;
+            // case update
+            case 0:
+            // purposeful fall through
+            default:
+                updateCurrentRow();
+
+                indexedSet[selectedRow]['data'] = [];
+                json.forEach(function (d) {
+                    var new_key = indexedSet[selectedRow]['name'] + " " + d['key'];
+                    console.debug("Old key: " + d['key'] + " New key: " + new_key);
+                    d['key'] = new_key;
+
+                    indexedSet[selectedRow]['data'].push(d);
+                });
+
+                updateTableTab();
+                updateSummaryTab();
+                break;
         }
 
-        nv.addGraph(function() {
+        nv.addGraph(function () {
+            // this adds the stupid block that is causing the other tabs to display funny
+            $('#chart-pane').show(); // show chart pane before rendering
+
             var chart1 = nv.models.lineChart()
-//                .margin({top: 0, right: 100, bottom: 50, left: 100})
-                .x(function(d) { return d[0] })
-                .y(function(d) { return d[1] });
+                .useInteractiveGuideline(true)
+                .margin({left: 100})
+                .x(function (d) {
+                    return d[0]
+                })
+                .y(function (d) {
+                    return d[1]
+                });
 
             chart1.xAxis
                 .axisLabel(term)
                 .tickFormat(d3.format("d"));
 
             chart1.yAxis
-                .axisLabel("Dollars")
-                .tickFormat(d3.format(",.2f"));
+                //.axisLabel("Dollars") // removing this since I can use currency now :)
+                .tickFormat(d3.format("$,.2f"));
 
             d3.select("#chart1 svg")
                 .datum(getDataSet())
@@ -227,7 +339,98 @@ function submitUpdate(name, add) {
 
             nv.utils.windowResize(chart1.update);
 
+            // remove the block style that was breaking the view...
+            $('#chart-pane').removeAttr('style');
+
             return chart1;
         });
     });
 }
+
+function addTableCollapse(id, name) {
+    addCollapse('table-pane-accordion', id, name);
+    populateTableCollapse(id);
+}
+
+function addSummaryCollapse(id, name) {
+    addCollapse('summary-pane-accordion', id, name);
+    populateSummaryCollapse(id);
+}
+
+function addCollapse(accord, id, name) {
+    $('#' + accord).append("<div class=\"panel panel-default\"> \
+        <div class=\"panel-heading\"> \
+            <h4 class=\"panel-title\"> \
+                <a data-toggle=\"collapse\" data-parent=\"#" + accord + "\" href=\"#" + id + "\"> \
+                " + name + " \
+                </a> \
+            </h4> \
+        </div> \
+        <div id=\"" + id + "\" class=\"panel-collapse collapse in\"> \
+            <div class=\"panel-body\"> \
+                <table class=\"table table-bordered table-hover\" id=\"" + id + "-summary\"></table>\
+            </div> \
+        </div> \
+    </div>");
+//    $('#' + id).collapse('toggle'); // collapse by default
+}
+
+function populateTableCollapse(id) {
+    var url_term = buildURL();
+    var url = url_term[0].replace('d3/', '');
+    var term = url_term[1].trim();
+
+    $.getJSON(url, function (data) {
+        var summary_selector = $('#' + id + '-summary').append('<thead><tr>' +
+            '<td>' + term + '</td>' +
+            '<td>Balance</td>' +
+            '<td>Amount</td>' +
+            '<td>Principal</td>' +
+            '<td>Interest</td>' +
+            '<td>Extra Payment</td>' +
+            '</thead></tr>');
+        $.each(data['table'], function (key, val) {
+            var row = '<tbody><tr>' +
+                '<td>' + val[term.toLowerCase()] + '</td>' +
+                '<td>' + val['balance'].formatCurrency() + '</td>' +
+                '<td>' + val['amount'].formatCurrency() + '</td>' +
+                '<td>' + val['principal'].formatCurrency() + '</td>' +
+                '<td>' + val['interest'].formatCurrency() + '</td>' +
+                '<td>' + val['extra payment'].formatCurrency() + '</td>' +
+                '</tr></tbody>'
+            summary_selector.append(row);
+        });
+    });
+}
+
+function populateSummaryCollapse(id) {
+    var url_term = buildURL();
+    var url = url_term[0].replace('d3/', '');
+
+    $.getJSON(url, function (data) {
+        var summary_selector = $('#' + id + '-summary').append('<thead><tr>' +
+            '<td>90% LTV</td>' +
+            '<td>80% LTV</td>' +
+            '<td>Total Amount Paid</td>' +
+            '<td>Total Extra Payment Paid</td>' +
+            '<td>Total Principal Paid</td>' +
+            '<td>Total Interest Paid</td>' +
+            '</thead></tr>');
+        var val = data['summary'];
+        var row = '<tbody><tr>' +
+            '<td>' + val['90% ltv'].formatCurrency() + '</td>' +
+            '<td>' + val['80% ltv'].formatCurrency() + '</td>' +
+            '<td>' + val['total amount'].formatCurrency() + '</td>' +
+            '<td>' + val['total extra payment'].formatCurrency() + '</td>' +
+            '<td>' + val['total principal'].formatCurrency() + '</td>' +
+            '<td>' + val['total interest'].formatCurrency() + '</td>' +
+            '</tr></tbody>'
+        summary_selector.append(row);
+    });
+}
+
+Number.prototype.formatCurrency = function (n, x) {
+    if (n == undefined) n = 2;
+    var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\.' : '$') + ')';
+    return '$' + this.toFixed(Math.max(0, ~~n)).replace(new RegExp(re, 'g'), '$&,');
+};
