@@ -120,9 +120,13 @@ class AmortizationSchedule:
         for month in self.monthly_schedule['table']:
             year = (month['month'] / 12) + 1
 
-            if month['month'] % 12 == 0:
-                year = month['month'] / 12
-                year_end_balance[year] = month['balance']
+            # not sure what I was doing here...I removed this block and just let it overwrite the year_end_balance
+            # with each month until a new year is hit. So the last month of the year leaves its balance.
+            # if month['month'] % 12 == 0:
+            #     year = month['month'] / 12
+            #     year_end_balance[year] = month['balance']
+
+            year_end_balance[year] = month['balance']
 
             month['year'] = year
             temp_schedule.append(month)

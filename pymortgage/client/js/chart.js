@@ -262,6 +262,7 @@ function submitUpdate(name, change) {
     d3.json(URL, function (error, json) {
         if (error) return console.warn(error);
 
+        // myAddGraph was a good first step but I still need to figure out how to iterate over indexedDB items and graph
         switch (change) {
             // case remove
             case -1:
@@ -275,11 +276,13 @@ function submitUpdate(name, change) {
                 break;
             // case add
             case +1:
+                $('#chart1').prepend("<div>SVG Title</div>");
                 var dataSet = [];
                 json.forEach(function (d) {
-                    var new_key = name + " " + d['key'];
-                    console.debug("Old key: " + d['key'] + " New key: " + new_key);
-                    d['key'] = new_key;
+                    // add mortgage name to key
+//                    var new_key = name + " " + d['key'];
+//                    console.debug("Old key: " + d['key'] + " New key: " + new_key);
+//                    d['key'] = new_key;
 
                     dataSet.push(d);
                 });
@@ -299,9 +302,10 @@ function submitUpdate(name, change) {
 
                 indexedSet[selectedRow]['data'] = [];
                 json.forEach(function (d) {
-                    var new_key = indexedSet[selectedRow]['name'] + " " + d['key'];
-                    console.debug("Old key: " + d['key'] + " New key: " + new_key);
-                    d['key'] = new_key;
+                    // add mortgage name to key
+//                    var new_key = indexedSet[selectedRow]['name'] + " " + d['key'];
+//                    console.debug("Old key: " + d['key'] + " New key: " + new_key);
+//                    d['key'] = new_key;
 
                     indexedSet[selectedRow]['data'].push(d);
                 });
@@ -311,40 +315,42 @@ function submitUpdate(name, change) {
                 break;
         }
 
-        nv.addGraph(function () {
-            // this adds the stupid block that is causing the other tabs to display funny
-            $('#chart-pane').show(); // show chart pane before rendering
-
-            var chart1 = nv.models.lineChart()
-                .useInteractiveGuideline(true)
-                .margin({left: 100})
-                .x(function (d) {
-                    return d[0]
-                })
-                .y(function (d) {
-                    return d[1]
-                });
-
-            chart1.xAxis
-                .axisLabel(term)
-                .tickFormat(d3.format("d"));
-
-            chart1.yAxis
-                //.axisLabel("Dollars") // removing this since I can use currency now :)
-                .tickFormat(d3.format("$,.2f"));
-
-            d3.select("#chart1 svg")
-                .datum(getDataSet())
-                .transition().duration(500).call(chart1);
-
-            nv.utils.windowResize(chart1.update);
-
-            // remove the block style that was breaking the view...
-            $('#chart-pane').removeAttr('style');
-
-            return chart1;
-        });
+        nv.addGraph(myAddGraph("chart1", term));
     });
+}
+
+function myAddGraph(name, term) {
+    // this adds the stupid block that is causing the other tabs to display funny
+    $('#chart-pane').show(); // show chart pane before rendering
+
+    var chart = nv.models.lineChart()
+        .useInteractiveGuideline(true)
+        .margin({left: 100})
+        .x(function (d) {
+            return d[0]
+        })
+        .y(function (d) {
+            return d[1]
+        });
+
+    chart.xAxis
+        .axisLabel(term)
+        .tickFormat(d3.format("d"));
+
+    chart.yAxis
+        //.axisLabel("Dollars") // removing this since I can use currency now :)
+        .tickFormat(d3.format("$,.2f"));
+
+    d3.select("#" + name + " svg")
+        .datum(getDataSet())
+        .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    // remove the block style that was breaking the view...
+    $('#chart-pane').removeAttr('style');
+
+    return chart;
 }
 
 function addTableCollapse(id, name) {
