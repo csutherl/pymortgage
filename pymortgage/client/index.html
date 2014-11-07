@@ -79,207 +79,228 @@
 
 <div class="container-fluid">
 <div class='row'>
-    <div class="col-md-3" style='padding-top:6px'>
-        <div class='well'>
-            <!-- Sidebar form -->
-            <legend>Amortization Schedule Calculator</legend>
-            <form name="input" action="javascript:submitUpdate()" method="get" class='form-horizontal' role='form'>
-                <div class='form-group'>
-                    <label for='name' class='col-md-5 control-label'>Mortgage Name:</label>
+<div class="col-md-3" style='padding-top:6px'>
+    <div class='well'>
+        <!-- Sidebar form -->
+        <legend>Amortization Schedule Calculator</legend>
+        <form name="input" action="javascript:submitUpdate()" method="get" class='form-horizontal' role='form'>
+            <div class='form-group'>
+                <label for='name' class='col-md-5 control-label'>Mortgage Name:</label>
 
-                    <div class='col-md-7'>
-                        <input class='form-control' type="text" id="name" value="Mortgage 1">
+                <div class='col-md-7'>
+                    <input class='form-control' type="text" id="name" value="Mortgage 1">
+                </div>
+            </div>
+            <div class='form-group'>
+                <label for='P' class='col-md-5 control-label'>Loan Amount:</label>
+
+                <div class='col-md-7'>
+                    <div class='input-group'>
+                        <span class='input-group-addon'>$</span>
+                        <input class='form-control' type="text" id="P" value="240000">
                     </div>
                 </div>
-                <div class='form-group'>
-                    <label for='P' class='col-md-5 control-label'>Loan Amount:</label>
+            </div>
+            <div class='form-group'>
+                <label for='r' class='col-md-5 control-label'>Interest Rate:</label>
 
-                    <div class='col-md-7'>
-                        <div class='input-group'>
-                            <span class='input-group-addon'>$</span>
-                            <input class='form-control' type="text" id="P" value="240000">
+                <div class='col-md-7'>
+                    <div class='input-group'>
+                        <span class='input-group-addon'>%</span>
+                        <input class='form-control' type="text" id="r" value="4.5">
+                    </div>
+                </div>
+            </div>
+            <div class='form-group'>
+                <label for='n' class='col-md-5 control-label'>Term:</label>
+
+                <div class='col-md-7'>
+                    <div class='input-group'>
+                        <input class='form-control' type="text" id="n" value="360">
+
+                        <div class='input-group-btn'>
+                            <button id='termbtn' href='#' class="btn btn-default dropdown-toggle"
+                                    data-toggle="dropdown"
+                                    role='button'>
+                                Month <span class='caret'></span>
+                            </button>
+                            <ul class='dropdown-menu' role='menu'>
+                                <li><a role='menuitem'
+                                       onclick="$('#termbtn').html('Year' + ' <span class=\'caret\'></span>' );">Year</a>
+                                </li>
+                                <li><a role='menuitem'
+                                       onclick="$('#termbtn').html('Month' + ' <span class=\'caret\'></span>' );">Month</a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-                <div class='form-group'>
-                    <label for='r' class='col-md-5 control-label'>Interest Rate:</label>
+            </div>
+            <!-- /term form-group -->
+            <div class='form-group'>
+                <label for='t' class='col-md-5 control-label'>Annual Taxes:</label>
 
-                    <div class='col-md-7'>
-                        <div class='input-group'>
-                            <span class='input-group-addon'>%</span>
-                            <input class='form-control' type="text" id="r" value="4.5">
-                        </div>
+                <div class='col-md-7'>
+                    <div class='input-group'>
+                        <span class='input-group-addon'>$</span>
+                        <input class='form-control' type="text" id="t" value="1000">
                     </div>
                 </div>
-                <div class='form-group'>
-                    <label for='n' class='col-md-5 control-label'>Term:</label>
+            </div>
+            <div class='form-group'>
+                <label for='i' class='col-md-5 control-label'>Annual Insurance:</label>
 
-                    <div class='col-md-7'>
-                        <div class='input-group'>
-                            <input class='form-control' type="text" id="n" value="360">
-
-                            <div class='input-group-btn'>
-                                <button id='termbtn' href='#' class="btn btn-default dropdown-toggle"
-                                        data-toggle="dropdown"
-                                        role='button'>
-                                    Month <span class='caret'></span>
-                                </button>
-                                <ul class='dropdown-menu' role='menu'>
-                                    <li><a role='menuitem'
-                                           onclick="$('#termbtn').html('Year' + ' <span class=\'caret\'></span>' );">Year</a>
-                                    </li>
-                                    <li><a role='menuitem'
-                                           onclick="$('#termbtn').html('Month' + ' <span class=\'caret\'></span>' );">Month</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                <div class='col-md-7'>
+                    <div class='input-group'>
+                        <span class='input-group-addon'>$</span>
+                        <input class='form-control' type="text" id="i" value="1000">
                     </div>
                 </div>
-                <!-- /term form-group -->
-                <div class='form-group'>
-                    <label for='t' class='col-md-5 control-label'>Annual Taxes:</label>
+            </div>
+            <div class='form-group'>
+                <label class='col-md-5 control-label'>Mortgage Type:</label>
 
-                    <div class='col-md-7'>
-                        <div class='input-group'>
-                            <span class='input-group-addon'>$</span>
-                            <input class='form-control' type="text" id="t" value="1000">
-                        </div>
+                <div class='col-md-7'>
+                    <div class='btn-group'>
+                        <input type="radio" id="fixed_type" name='g1' onclick='hideArmInputs()' checked> Fixed
+                        </br>
+                        <input type="radio" id="arm_type" onclick='showArmInputs()' name='g1'> Adjustable Rate
                     </div>
                 </div>
-                <div class='form-group'>
-                    <label for='i' class='col-md-5 control-label'>Annual Insurance:</label>
+            </div>
+            <div class='form-group' style='display: None' id='af-group'>
+                <label for='af' class='col-md-5 control-label'>Adjustment Frequency (in years):</label>
 
-                    <div class='col-md-7'>
-                        <div class='input-group'>
-                            <span class='input-group-addon'>$</span>
-                            <input class='form-control' type="text" id="i" value="1000">
-                        </div>
-                    </div>
+                <div class='col-md-7'>
+                    <input class='form-control' id='af' type='text' value='5'>
                 </div>
-                <div class='form-group'>
-                    <label class='col-md-5 control-label'>Mortgage Type:</label>
+            </div>
+            <div class='form-group' style='display: None' id='ac-group'>
+                <label for='ac' class='col-md-5 control-label'>Adjustment Cap:</label>
 
-                    <div class='col-md-7'>
-                        <div class='btn-group'>
-                            <input type="radio" id="fixed_type" name='g1' onclick='hideArmInputs()' checked> Fixed
-                            </br>
-                            <input type="radio" id="arm_type" onclick='showArmInputs()' name='g1'> Adjustable Rate
-                        </div>
+                <div class='col-md-7'>
+                    <div class='input-group'>
+                        <span class='input-group-addon'>%</span>
+                        <input class='form-control' id='ac' type='text' value='2'>
                     </div>
                 </div>
-                <div class='form-group' style='display: None' id='af-group'>
-                    <label for='af' class='col-md-5 control-label'>Adjustment Frequency (in years):</label>
+            </div>
+            <div class='form-group' style='display: None' id='lc-group'>
+                <label for='lc' class='col-md-5 control-label'>Lifetime Cap:</label>
 
-                    <div class='col-md-7'>
-                        <input class='form-control' id='af' type='text' value='5'>
+                <div class='col-md-7'>
+                    <div class='input-group'>
+                        <span class='input-group-addon'>%</span>
+                        <input class='form-control' id='lc' type='text' value='6'>
                     </div>
                 </div>
-                <div class='form-group' style='display: None' id='ac-group'>
-                    <label for='ac' class='col-md-5 control-label'>Adjustment Cap:</label>
+            </div>
+            <div class='form-group'>
+                <label for='e' class='col-md-5 control-label'>Extra Payment:</label>
 
-                    <div class='col-md-7'>
-                        <div class='input-group'>
-                            <span class='input-group-addon'>%</span>
-                            <input class='form-control' id='ac' type='text' value='2'>
-                        </div>
+                <div class='col-md-7'>
+                    <div class='input-group'>
+                        <span class='input-group-addon'>$</span>
+                        <input class='form-control' type="text" id="e" value="0">
                     </div>
                 </div>
-                <div class='form-group' style='display: None' id='lc-group'>
-                    <label for='lc' class='col-md-5 control-label'>Lifetime Cap:</label>
+            </div>
+            <div class='form-group'>
+                <!--<div class='col-md-6 col-md-offset-2'> &lt;!&ndash; attempt at centering the buttons &ndash;&gt;
+                -->
+                <div style='margin-left: auto;margin-right: auto;text-align: center'>
+                    <!-- attempt at centering the buttons -->
+                    <input class='btn btn-default' type='button' onclick='tryUpdate();' value="Update">
+                    <input class='btn btn-default' type='button' onclick="addToChart();" value="Add to chart">
+                    <input class='btn btn-default' type='button' onclick="removeFromChart();"
+                           value="Remove from chart">
+                </div>
+            </div>
+        </form>
+        </br>
+        <table id="mortgages-table" style='display: None; background: White;'
+               class='table table-hover table-bordered'>
+            <thead>
+            <tr>
+                <td>Name</td>
+                <td>Amount</td>
+                <td>Rate</td>
+                <td>Term</td>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<!-- Page content-->
+<div class='col-md-8' id="page-content">
+    <ul class="nav nav-tabs" role="tablist" id="myTabs" style="padding-top: 6px">
+        <li class="active"><a href="#start-pane" role="tab" data-toggle="tab">Start here</a></li>
+        <li><a href="#chart-pane" role="tab" data-toggle="tab">Chart</a></li>
+        <li><a href="#table-pane" role="tab" data-toggle="tab">Table</a></li>
+        <li><a href="#summary-pane" role="tab" data-toggle="tab">Summary</a></li>
+    </ul>
+    <!-- padding underneath the tab headings. just a little space to break it apart -->
+    <div style="padding-bottom: 6px"></div>
+    <div class="tab-content">
+        <div class="tab-pane fade active in" id="start-pane">
+            </br> <!-- so we don't start right after the tab pane... -->
+            <p>Hello and thanks for visiting my app!</p>
 
-                    <div class='col-md-7'>
-                        <div class='input-group'>
-                            <span class='input-group-addon'>%</span>
-                            <input class='form-control' id='lc' type='text' value='6'>
-                        </div>
-                    </div>
-                </div>
-                <div class='form-group'>
-                    <label for='e' class='col-md-5 control-label'>Extra Payment:</label>
+            <p>This is a mortgage calculator that lets you estimate your monthly loan payments as well as
+                compare multiple different types of mortgages so that you can see which works best for your
+                situation. It includes options to add estimated taxes, insurance, and even extra payments.
+                It also displays many other data points about the mortgage, which will eventually be covered in the
+                <a href="#about">about page</a>. As of now, I think its pretty self explanatory, but please
+                open <a href="https://github.com/csutherl/pymortgage/issues" target="_blank">issues</a> or let me
+                know if things are unclear.</p>
 
-                    <div class='col-md-7'>
-                        <div class='input-group'>
-                            <span class='input-group-addon'>$</span>
-                            <input class='form-control' type="text" id="e" value="0">
-                        </div>
-                    </div>
-                </div>
-                <div class='form-group'>
-                    <!--<div class='col-md-6 col-md-offset-2'> &lt;!&ndash; attempt at centering the buttons &ndash;&gt;
-                    -->
-                    <div style='margin-left: auto;margin-right: auto;text-align: center'>
-                        <!-- attempt at centering the buttons -->
-                        <input class='btn btn-default' type='button' onclick='tryUpdate();' value="Update">
-                        <input class='btn btn-default' type='button' onclick="addToChart();" value="Add to chart">
-                        <input class='btn btn-default' type='button' onclick="removeFromChart();"
-                               value="Remove from chart">
-                    </div>
-                </div>
-            </form>
-            </br>
-            <table id="mortgages-table" style='display: None; background: White;'
-                   class='table table-hover table-bordered'>
-                <thead>
-                <tr>
-                    <td>Name</td>
-                    <td>Amount</td>
-                    <td>Rate</td>
-                    <td>Term</td>
-                </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <p>OK, lets get started! As you can see from the form on the left, we take any many values in order
+                to display the loan in chart form. It is pre-filled with a name and other values that you can
+                adjust. To get started, adjust the form to your current mortgage loan amount, interest rate,
+                term, annual taxes and insurance (if you know them or 0 if you don't), and loan type. Note that the
+                adjustable rate form inputs are hidden unless you click the adjustable rate type radio button. There
+                is also a field for extra payment, which currently gets applied to every term over the course of
+                the loan. That will be changed to be more granular in future versions.</p>
+
+            <p>Once you have adjusted the form with your values, click Add to Chart! You won't notice anything
+                right away but click the <a href="#chart-pane" data-toggle="tab">"chart" tab</a> on the right
+                hand side of the page and you will see the values charted. Click it and take a look at your mortgage!
+                You will also note a table that shows the complete amortization schedule as well as a summary with
+                a few points about the overall mortgage.</p>
+
+            </br></br>
+            <p><b>Disclaimer:</b> All of these numbers are estimates and not exactly fitting to your situation. My idea
+                was to provide a means to get as close to the real values as possible, but some of the math is a bit off.
+                I have tested this against my own mortgage numbers and found that it is very close (like $1 off). So,
+                know that the numbers aren't perfect...yet...</p>
+        </div>
+        <div class="tab-pane fade" id="chart-pane">
+            <!--<div id='single-chart'><svg class="chart"/></div>-->
+            <div id='balance-chart'>
+                <svg class="chart"/>
+            </div>
+            <div id='principal-chart'>
+                <svg class="chart"/>
+            </div>
+            <div id='interest-chart'>
+                <svg class="chart"/>
+            </div>
+            <div id='amount-chart'>
+                <svg class="chart"/>
+            </div>
+            <div id='extra_payment-chart'>
+                <svg class="chart"/>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="table-pane">
+            <div class="panel-group table-responsive" id="table-pane-accordion"></div>
+        </div>
+        <div class="tab-pane fade" id="summary-pane">
+            <div class="panel-group table-responsive" id="summary-pane-accordion"></div>
         </div>
     </div>
-    <!-- Page content-->
-    <div class='col-md-8' id="page-content">
-        <ul class="nav nav-tabs" role="tablist" id="myTabs" style="padding-top: 6px">
-            <li class="active"><a href="#start-pane" role="tab" data-toggle="tab">Start here</a></li>
-            <li><a href="#chart-pane" role="tab" data-toggle="tab">Chart</a></li>
-            <li><a href="#table-pane" role="tab" data-toggle="tab">Table</a></li>
-            <li><a href="#summary-pane" role="tab" data-toggle="tab">Summary</a></li>
-        </ul>
-        <!-- padding underneath the tab headings. just a little space to break it apart -->
-        <div style="padding-bottom: 6px"></div>
-        <div class="tab-content">
-            <div class="tab-pane fade active in" id="start-pane">
-                </br> <!-- so we don't start right after the tab pane... -->
-                <p>Hello and thanks for visiting my app!</p>
-
-                <p>This is a mortgage loan calculator that lets you estimate your monthly loan payments as well as
-                    compare multiple different types of mortgages so that you can see which works best for your
-                    situation. It also displays many other data points about the mortgage, all covered in the
-                    <a href="#about">about page</a>. Please take a look!</p>
-
-                <p>OK, lets get started! As you can see from the form on the left, we take any many values in order
-                    to display the loan in chart form. It is pre-filled with a name and other values that you can
-                    adjust. To get started, Adjust the form to your current mortgage loan amount, interest rate,
-                    term, annual taxes and insurance (if you know them), and loan type. Note that the adjustable
-                    rate form inputs are hidden unless you click the adjustable rate type radio button. There is
-                    also a field for extra payment, which currently gets applied to every term over the course of
-                    the loan. That will be changed to be more granular in future versions.</p>
-
-                <p>Once you have adjusted the form with your values, click Add to Chart! You won't notice anything
-                    right away unless you click the <a href="#chart-pane" data-toggle="tab">"chart" tab</a> on the right
-                    hand side of the page. Click it and take a look at your mortgage!</p>
-            </div>
-            <div class="tab-pane fade" id="chart-pane">
-                <!--<div id='single-chart'><svg class="chart"/></div>-->
-                <div id='balance-chart'><svg class="chart"/></div>
-                <div id='principal-chart'><svg class="chart"/></div>
-                <div id='interest-chart'><svg class="chart"/></div>
-                <div id='amount-chart'><svg class="chart"/></div>
-                <div id='extra_payment-chart'><svg class="chart"/></div>
-            </div>
-            <div class="tab-pane fade" id="table-pane">
-                <div class="panel-group table-responsive" id="table-pane-accordion"></div>
-            </div>
-            <div class="tab-pane fade" id="summary-pane">
-                <div class="panel-group table-responsive" id="summary-pane-accordion"></div>
-            </div>
-        </div>
-    </div>
+</div>
 </div>
 <!-- /.row -->
 </div>
