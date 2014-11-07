@@ -221,14 +221,27 @@ function tryUpdate() {
     }
 }
 
-function getDataSet() {
+function getDataSet(legend_key) {
     var temp = [];
 
     for (var key in indexedSet) {
         var data = indexedSet[key]['data'];
 
-        for (var dkey in data) {
-            temp.push(data[dkey]);
+        // if we pass no legend_key, return all
+        if (typeof legend_key === 'undefined') {
+            for (var dkey in data) {
+                temp.push(data[dkey]);
+            }
+        } else {
+            for (var dkey in data) {
+                // take to lowercase so that I can still use camel case
+                if (data[dkey]['key'].toLowerCase().indexOf(legend_key) != -1) {
+                    temp.push(data[dkey]);
+//                    console.debug("Matched \'" + legend_key + "\' to \'" + data[dkey]['key'] + "\'")
+                } else {
+//                    console.error("Failed to match \'" + legend_key + "\'");
+                }
+            }
         }
     }
 
@@ -268,21 +281,26 @@ function submitUpdate(name, change) {
             case -1:
                 // do nothing here b/c the call to getDataSet() will basically add in all the data from indexedSet
                 if (indexedSet.length == 0) {
+                    // this hackery isn't necessary if i switch to c3...
                     // hacky solution b/c of issue 349 open against nvd3 (old data still shows when no data presented).
                     // just remove the svg for now...might need to add a no data message or something here.
-                    $('#chart1 svg').remove();
-                    $('#chart1').append('<svg id=\"chart-svg\" class=\"chart\"/>');
+                    $('#chart-pane svg').each(function () {
+                        $(this).remove();
+                    });
+
+                    $('#chart-pane div').each(function () {
+                        $(this).append('<svg class=\"chart\"/>');
+                    });
                 }
                 break;
             // case add
             case +1:
-                $('#chart1').prepend("<div>SVG Title</div>");
                 var dataSet = [];
                 json.forEach(function (d) {
                     // add mortgage name to key
-//                    var new_key = name + " " + d['key'];
+                    var new_key = name + " " + d['key'];
 //                    console.debug("Old key: " + d['key'] + " New key: " + new_key);
-//                    d['key'] = new_key;
+                    d['key'] = new_key;
 
                     dataSet.push(d);
                 });
@@ -290,7 +308,6 @@ function submitUpdate(name, change) {
                 for (var key in indexedSet) {
                     if (name == indexedSet[key]['name']) {
                         indexedSet[key]['data'] = dataSet;
-//                    console.debug("Added data to set: " + JSON.stringify(indexedSet[key]));
                     }
                 }
                 break;
@@ -303,9 +320,9 @@ function submitUpdate(name, change) {
                 indexedSet[selectedRow]['data'] = [];
                 json.forEach(function (d) {
                     // add mortgage name to key
-//                    var new_key = indexedSet[selectedRow]['name'] + " " + d['key'];
+                    var new_key = indexedSet[selectedRow]['name'] + " " + d['key'];
 //                    console.debug("Old key: " + d['key'] + " New key: " + new_key);
-//                    d['key'] = new_key;
+                    d['key'] = new_key;
 
                     indexedSet[selectedRow]['data'].push(d);
                 });
@@ -315,11 +332,22 @@ function submitUpdate(name, change) {
                 break;
         }
 
-        nv.addGraph(myAddGraph("chart1", term));
+        // this is the block to add the logic for having a single chart with only one set, but that will be a lot of
+        // small changes, so will do that after i get mutli chart working solidly
+//        if (indexedSet.length <= 1) {
+//            nv.addGraph(myAddGraph("single-chart", term));
+//        } else {
+        // taxes and insurance would be static values, so they shouldn't get their own chart
+        var keyArr = ["balance", "principal", "interest", "amount", "extra payment"];
+        for (var i=0; i < keyArr.length; i++) {
+            key = keyArr[i];
+            nv.addGraph(myAddGraph(key.replace(' ', '_') + "-chart", term, key));
+        }
+//        }
     });
 }
 
-function myAddGraph(name, term) {
+function myAddGraph(name, term, key) {
     // this adds the stupid block that is causing the other tabs to display funny
     $('#chart-pane').show(); // show chart pane before rendering
 
@@ -342,7 +370,7 @@ function myAddGraph(name, term) {
         .tickFormat(d3.format("$,.2f"));
 
     d3.select("#" + name + " svg")
-        .datum(getDataSet())
+        .datum(getDataSet(key))
         .transition().duration(500).call(chart);
 
     nv.utils.windowResize(chart.update);
@@ -378,7 +406,6 @@ function addCollapse(accord, id, name) {
             </div> \
         </div> \
     </div>");
-//    $('#' + id).collapse('toggle'); // collapse by default
 }
 
 function populateTableCollapse(id) {
