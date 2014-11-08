@@ -1,6 +1,6 @@
 __author__ = 'coty'
 
-from pymortgage.server.amortization_schedule import AmortizationSchedule
+# from pymortgage.server.amortization_schedule import AmortizationSchedule
 
 
 def parse_params(params):
@@ -37,6 +37,10 @@ def parse_params(params):
 
         adjustable = True
     except KeyError:
+        adj_freq = None
+        adj_cap = None
+        life_cap = None
+
         adjustable = False
     except ValueError as ve:
         raise ValueError("A parameter has an invalid value: %s" % ve.message)
@@ -67,7 +71,10 @@ def parse_params(params):
         elif life_cap < 0 or life_cap > 1:
             raise Exception("Lifetime cap is not expressed as decimal.")
 
-    if adjustable:
-        return AmortizationSchedule(rate, prin, term, tax, ins, adj_freq, adj_cap, life_cap, extra_pmt)
-    else:
-        return AmortizationSchedule(rate, prin, term, tax, ins, extra_pmt=extra_pmt)
+    # if adjustable:
+    #     return AmortizationSchedule(rate, prin, term, tax, ins, adj_freq, adj_cap, life_cap, extra_pmt)
+    # else:
+    #     return AmortizationSchedule(rate, prin, term, tax, ins, extra_pmt=extra_pmt)
+
+    return {'rate': rate, 'prin': prin, 'term': term, 'tax': tax, 'ins': ins, 'adj_freq': adj_freq, 'adj_cap': adj_cap,
+            'life_cap': life_cap, 'extra_pmt': extra_pmt} #, 'adjustable': adjustable} # unnecessary data now I think

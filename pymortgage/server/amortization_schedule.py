@@ -5,10 +5,14 @@ class AmortizationSchedule:
 
     # assuming adj_frequency is always expressed in years, and adj_cap and lifetime_cap are expressed as decimals
     def __init__(self, rate, P, n, annual_tax=0, annual_ins=0, adj_frequency=None, adj_cap=None, lifetime_cap=None,
-                 extra_pmt=None):
+                 extra_pmt=None, yearly=False):
         self.rate = rate
         self.P = P
-        self.n = n
+
+        if yearly:
+            self.n = n * 12
+        else:
+            self.n = n
 
         # static taxes and insurance
         self.annual_tax = annual_tax
@@ -91,14 +95,6 @@ class AmortizationSchedule:
             # add taxes and insurance to the amount and extra payment
             curr_month['amount'] += self.monthly_tax + self.monthly_insurance + self.extra_pmt
 
-            # if balance is 0, then 0 out all other payment
-            if curr_month['balance'] == 0:
-                curr_month['taxes'] = 0
-                curr_month['insurance'] = 0
-                curr_month['extra payment'] = 0
-                curr_month['amount'] = 0
-                curr_month['principal'] = 0
-
             count_n -= 1
 
             temp_schedule.append(curr_month)
@@ -108,7 +104,7 @@ class AmortizationSchedule:
 
     def create_yearly_schedule(self):
         # multiply the original term by 12 so that we can create years
-        temp_n = self.n * 12
+        temp_n = self.n / 12
         self.n = temp_n
 
         if len(self.monthly_schedule) == 0:
@@ -117,19 +113,19 @@ class AmortizationSchedule:
         temp_schedule = []
         year_end_balance = dict()
 
+        counter = 1
+        year = 1
         for month in self.monthly_schedule['table']:
-            year = (month['month'] / 12) + 1
-
-            # not sure what I was doing here...I removed this block and just let it overwrite the year_end_balance
-            # with each month until a new year is hit. So the last month of the year leaves its balance.
-            # if month['month'] % 12 == 0:
-            #     year = month['month'] / 12
-            #     year_end_balance[year] = month['balance']
-
+            # overwrite each year end balance with the last month's
             year_end_balance[year] = month['balance']
 
             month['year'] = year
             temp_schedule.append(month)
+
+            # python rounding wasn't working out, so I employed my own strategy to get the year count right
+            counter += 1
+            if counter % 12 == 1:
+                year += 1
 
         # grouping
         yearly_schedule = []
