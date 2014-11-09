@@ -286,9 +286,18 @@ function submitUpdate(name, change) {
                         $(this).remove();
                     });
 
+                    // hide all chart divs and show single-chart when all are removed
                     $('#chart-pane div').each(function () {
                         $(this).append('<svg class=\"chart\"/>');
+                        $(this).hide();
                     });
+                    $('#single-chart').show();
+                } else if (indexedSet.length == 1) {
+                    // if there is only one mortgage in the set, hide all the other charts and only show the single one
+                    $('#chart-pane div').each(function () {
+                        $(this).hide();
+                    });
+                    $('#single-chart').show();
                 }
                 break;
             // case add
@@ -307,6 +316,15 @@ function submitUpdate(name, change) {
                     if (name == indexedSet[key]['name']) {
                         indexedSet[key]['data'] = dataSet;
                     }
+                }
+
+                // if we added a second or more mortgages then we need to show those charts and hide the single one
+                // this will prevent errors from trying to render on hidden charts
+                if (indexedSet.length > 1) {
+                    $('#chart-pane div').each(function () {
+                        $(this).show();
+                    });
+                    $('#single-chart').hide();
                 }
                 break;
             // case update
@@ -332,16 +350,22 @@ function submitUpdate(name, change) {
 
         // this is the block to add the logic for having a single chart with only one set, but that will be a lot of
         // small changes, so will do that after i get mutli chart working solidly
-//        if (indexedSet.length <= 1) {
-//            nv.addGraph(myAddGraph("single-chart", term));
-//        } else {
-        // taxes and insurance would be static values, so they shouldn't get their own chart
-        var keyArr = ["balance", "principal", "interest", "amount", "extra payment"];
-        for (var i=0; i < keyArr.length; i++) {
-            key = keyArr[i];
-            nv.addGraph(myAddGraph(key.replace(' ', '_') + "-chart", term, key));
+        if (indexedSet.length <= 1) {
+            nv.addGraph(myAddGraph("single-chart", term));
+        } else {
+            // hide the single chart if its visible when showing the multi charts
+            var sc_selector = $('#single-chart');
+            if (sc_selector.is(":visible")) {
+                sc_selector.hide();
+            }
+
+            // taxes and insurance would be static values, so they shouldn't get their own chart
+            var keyArr = ["balance", "principal", "interest", "amount", "extra payment"];
+            for (var i = 0; i < keyArr.length; i++) {
+                key = keyArr[i];
+                nv.addGraph(myAddGraph(key.replace(' ', '_') + "-chart", term, key));
+            }
         }
-//        }
     });
 }
 
