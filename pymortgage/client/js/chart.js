@@ -272,9 +272,7 @@ function submitUpdate(name, change) {
     var term = val[1];
     console.debug("Update URL: " + URL);
 
-    d3.json(URL, function (error, json) {
-        if (error) return console.warn(error);
-
+    $.getJSON(URL, function (json) {
         // myAddGraph was a good first step but I still need to figure out how to iterate over indexedDB items and graph
         switch (change) {
             // case remove
