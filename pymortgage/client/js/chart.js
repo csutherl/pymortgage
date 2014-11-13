@@ -3,6 +3,11 @@ var selectedRow = -1;
 var selectedRowID = 'null';
 var rowCounter = 0;
 
+// initially we need to hide all the charts and titles
+$('#chart-pane div').each(function () {
+    $(this).hide();
+});
+
 function buildURL() {
     var base_URL = "/api/d3/amort";
 
@@ -234,8 +239,12 @@ function getDataSet(legend_key) {
             }
         } else {
             for (var dkey in data) {
+                key = data[dkey]['key'];
                 // take to lowercase so that I can still use camel case
-                if (data[dkey]['key'].toLowerCase().indexOf(legend_key) != -1) {
+                if (key.toLowerCase().indexOf(legend_key) != -1) {
+                    // remove legend key because the charts have titles now!
+                    var key_re = new RegExp("\\s*" + legend_key + "\\s*", "gi");
+                    data[dkey]['key'] = key.replace(key_re, "");
                     temp.push(data[dkey]);
 //                    console.debug("Matched \'" + legend_key + "\' to \'" + data[dkey]['key'] + "\'")
                 } else {
@@ -318,6 +327,13 @@ function submitUpdate(name, change) {
                     }
                 }
 
+                // hide all the divs and show the single one when we add one
+                if (indexedSet.length == 1) {
+                    $('#chart-pane div').each(function () {
+                        $(this).hide();
+                    });
+                    $('#single-chart').show();
+                }
                 // if we added a second or more mortgages then we need to show those charts and hide the single one
                 // this will prevent errors from trying to render on hidden charts
                 if (indexedSet.length > 1) {
