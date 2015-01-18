@@ -2,7 +2,7 @@
 
 The pymortgage application is an application that provides the ability to dynamically compare multiple different types of mortgages. There are lots of different mortgage calculators out there, but I've found none that allow you to do comparisons as granularly as this.
 
-The project source is hosted here <http://github.com/csutherl/pymortgage> and I deploy a development build as I make major changes to on Openshift here <pymortgage-csutherl.rhcloud.com>. Feel free to visit and test it out!
+The project source is hosted here <http://github.com/csutherl/pymortgage> and I deploy a development build as I make major changes to on Openshift here <http://pymortgage-csutherl.rhcloud.com>. Feel free to visit and test it out!
 
 For the latest version, to contribute, and for more information, please visit the project pages on GitHub, or the Openshift node.
 
