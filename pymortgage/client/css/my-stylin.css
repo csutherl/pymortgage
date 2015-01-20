@@ -15,3 +15,7 @@ p {
     text-align: center;
     font-size: 20px;
 }
+
+.highlight {
+    background: #e2e5e9;
+}

@@ -132,6 +132,9 @@ function getFormState() {
 }
 
 function selectRow(tr) {
+    $('#' + selectedRowID).removeClass('highlight');
+    selectedRowID = $(tr).attr('id');
+    $('#' + selectedRowID).addClass('highlight');
     selectedRowID = $(tr).attr('id');
     var mortgage_name = '';
 
